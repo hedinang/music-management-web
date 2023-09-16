@@ -1,0 +1,67 @@
+.SideBarWrapper {
+    background-color: #222d32 !important;
+    color: white;
+    font-family: 'Inter' !important;
+
+    .ant-menu-item.ant-menu-item-selected {
+        background-color: '$blue-4';
+        @apply text-white;
+
+        svg {
+            path {
+                stroke: white;
+            }
+        }
+    }
+
+    .ant-menu-item {
+        // @apply text-gray-1;
+
+        svg {
+            path {
+                // @apply stroke-gray-1;
+            }
+        }
+    }
+
+    .ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light {
+        border-inline-end: none;
+    }
+
+    .user-panel {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        padding: 10px 5px 10px 5px;
+        font-size: 12px;
+    }
+
+    .user-panel-logo {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        background-color: #377fa9;
+        color: white;
+        height: 50px;
+    }
+    .ant-menu-item.ant-menu-item-selected{
+        
+        padding: 0px 5px 0px 5px !important;
+        background-color: #222d32;
+        color:#b8c7ce
+    }
+    ul li :hover{
+        background-color: #1A2226 !important;
+    }
+    .category-separation{
+        font-size: 12px;
+        color:#4b646f;
+        background-color: #1a2226;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        justify-content: center;
+    }
+}

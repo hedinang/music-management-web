@@ -1,0 +1,51 @@
+.header-wrapper {
+    box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.1) !important;
+    font-family: 'Inter';
+    div:first-child {
+        // height: $header;
+        height: 30px;
+    }
+    nav {
+        .ant-tabs {
+            &-nav {
+                margin-bottom: 0;
+            }
+            .ant-tabs-tab {
+                padding-bottom: 18px;
+                height: 70px;
+                color: #808080;
+                &.ant-tabs-tab-active {
+                    @apply flex items-center;
+                    .ant-tabs-tab-btn {
+                        // color: $blue-3;
+                        color: blue
+                    }
+                }
+            }
+        }
+        .ant-tabs-tab-btn {
+            display: flex;
+            align-items: center;
+        }
+    }
+    .ant-select {
+        .ant-select-selector {
+            // border: 1px solid $blue-2;
+            border: 1px solid blue;
+            // color: $blue-1;
+            color: red;
+            border-radius: 10px;
+        }
+    }
+    
+}
+.ant-layout-header{
+    padding: 0px 10px !important;
+    
+}
+.header{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
