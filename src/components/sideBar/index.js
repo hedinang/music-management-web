@@ -42,10 +42,10 @@ const SideBar = () => {
 
     const items = [
         getItem(<Link to={'/dashboard'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
-        getItem(<Link to={'/'}>{'Quản lý danh sách nhạc'}</Link>, '1', <BsFillDatabaseFill />),
-        getItem(<Link to={'/'}>{'Quản lý danh sách nhạc gốc'}</Link>, '1', <BsFillDatabaseFill />),
+        getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
+        getItem(<Link to={'/song/list'}>{'Quản lý danh sách nhạc'}</Link>, '1', <BsFillDatabaseFill />),
         getItem(<Link to={'/'}>{'Danh sách phê duyệt mua'}</Link>, '1', <BsFillCartFill />),
-        getItem(<Link to={'/'}>{'Danh mục'}</Link>, '1', <UnorderedListOutlined />),
+        getItem(<Link to={'/category/list'}>{'Danh mục'}</Link>, '1', <UnorderedListOutlined />),
         getItem(<Link to={'/'}>{'Mã quà tặng'}</Link>, '1', <GiftOutlined />)
     ]
     const minorItems = [
@@ -79,7 +79,7 @@ const SideBar = () => {
     // const ContentHeaderMenu = useMemo < string > (() => (pathname.includes('enviroment') ? t('left_menu.my_enviroment.title') : t('left_menu.community.title')), [pathname, t]);
     return (
         <Layout.Sider
-            className="!max-w-[230px] !w-auto 
+            className="!max-w-[230px] !w-auto h-[100vh]
               SideBarWrapper"
             collapsible
             collapsed={collapsed}

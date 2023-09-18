@@ -5,6 +5,12 @@ import Login from '../pages/login';
 import Dashboard from '../pages/dashboard'
 import React from 'react';
 import AuthLayout from '../components/layouts/AuthLayout';
+import CategoryList from '../pages/category/categoryList';
+import CategoryDetail from '../pages/category/categoryDetail';
+import SongList from '../pages/song/SongList';
+import SongDetail from '../pages/song/SongDetail';
+import ProductDetail from '../pages/product/ProductDetail';
+import ProductList from '../pages/product/ProductList';
 // import CategoryEdit from '../components/category';
 // import Category from '../components/category';
 
@@ -32,8 +38,60 @@ const router = createBrowserRouter([
             {
                 path: '/dashboard',
                 element: <Dashboard />
-            }]
+            },
+
+            {
+                path: '/category/list',
+                element: <CategoryList />
+            },
+            {
+                path: '/category/add',
+                element: <CategoryDetail
+                    different={{ type: 'add' }} />
+            },
+            {
+                path: '/category/edit',
+                element: <CategoryDetail
+                    different={{ type: 'edit' }} />
+            },
+            {
+                path: '/category/view',
+                element: <CategoryDetail
+                    different={{ type: 'view' }} />
+            },
+
+            {
+                path: '/song/list',
+                element: <SongList />
+            },
+            {
+                path: '/song/add',
+                element: <SongDetail
+                    different={{ type: 'add' }} />
+            },
+            // {
+            //     path: '/category/edit',
+            //     element: <CategoryDetail
+            //         different={{ type: 'edit' }} />
+            // },
+            // {
+            //     path: '/category/view',
+            //     element: <CategoryDetail
+            //         different={{ type: 'view' }} />
+            // }
+
+            {
+                path: '/product/list',
+                element: <ProductList />
+            },
+            {
+                path: '/product/add',
+                element: <ProductDetail
+                    different={{ type: 'add' }} />
+            },
+        ]
     },
+
     // {
     //     path: "/category/:id",
     //     element: <CategoryEdit/>

@@ -16,7 +16,12 @@ body {
     width: 100%;
     background: #f2f2f2;
     width: 100%;
-    height: 100%;
+    // height: 100%;
     font-family: 'Inter', sans-serif;
+    
+  height: 100vh !important;
 }
 
+th:first-child.ant-selection-column::after{
+    content: none;
+}

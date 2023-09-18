@@ -39,7 +39,7 @@ const AuthLayout = ({ children }) => {
     return (
         <>
             {/* <LoadingScreen isLoading={langLoading} /> */}
-            <Space direction="vertical" style={{ width: '100%' }} size={[0, 48]}>
+            <Space direction="vertical" style={{ width: '100%'}} size={[0, 48]}>
                 <Layout>
                     <Layout >
                         <SideBar />

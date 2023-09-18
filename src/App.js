@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { ConfigProvider, theme } from "antd";
 import './styles/style.scss'
+import './styles/table.scss'
 
 function App() {
   return (
