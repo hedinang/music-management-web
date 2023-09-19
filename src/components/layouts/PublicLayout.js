@@ -10,7 +10,7 @@ const PublicLayout = ({ children }) => {
     const navigate = useNavigate();
     useEffect(() => {
         if (token) {
-            navigate('/', { replace: true });
+            navigate('/dashboard', { replace: true });
         }
     }, [token]);
     return children;

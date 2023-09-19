@@ -11,6 +11,10 @@ import SongList from '../pages/song/SongList';
 import SongDetail from '../pages/song/SongDetail';
 import ProductDetail from '../pages/product/ProductDetail';
 import ProductList from '../pages/product/ProductList';
+import SaleDetail from '../pages/sale/SaleDetail';
+import SaleList from '../pages/sale/SaleList';
+import CustomerList from '../pages/customer/CustomerList';
+import CustomerDetail from '../pages/customer/CustomerDetail';
 // import CategoryEdit from '../components/category';
 // import Category from '../components/category';
 
@@ -69,6 +73,16 @@ const router = createBrowserRouter([
                 element: <SongDetail
                     different={{ type: 'add' }} />
             },
+
+            {
+                path: '/product/list',
+                element: <ProductList />
+            },
+            {
+                path: '/product/add',
+                element: <ProductDetail
+                    different={{ type: 'add' }} />
+            },
             // {
             //     path: '/category/edit',
             //     element: <CategoryDetail
@@ -81,12 +95,22 @@ const router = createBrowserRouter([
             // }
 
             {
-                path: '/product/list',
-                element: <ProductList />
+                path: '/sale/list',
+                element: <SaleList />
             },
             {
-                path: '/product/add',
-                element: <ProductDetail
+                path: '/sale/add',
+                element: <SaleDetail
+                    different={{ type: 'add' }} />
+            },
+
+            {
+                path: '/customer/list',
+                element: <CustomerList />
+            },
+            {
+                path: '/customer/add',
+                element: <CustomerDetail
                     different={{ type: 'add' }} />
             },
         ]

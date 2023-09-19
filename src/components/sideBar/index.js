@@ -44,12 +44,12 @@ const SideBar = () => {
         getItem(<Link to={'/dashboard'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
         getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
         getItem(<Link to={'/song/list'}>{'Quản lý danh sách nhạc'}</Link>, '1', <BsFillDatabaseFill />),
-        getItem(<Link to={'/'}>{'Danh sách phê duyệt mua'}</Link>, '1', <BsFillCartFill />),
+        getItem(<Link to={'/sale/list'}>{'Danh sách đã bán'}</Link>, '1', <BsFillCartFill />),
         getItem(<Link to={'/category/list'}>{'Danh mục'}</Link>, '1', <UnorderedListOutlined />),
         getItem(<Link to={'/'}>{'Mã quà tặng'}</Link>, '1', <GiftOutlined />)
     ]
     const minorItems = [
-        getItem(<Link to={'/'}>{'Danh sách người dùng'}</Link>, '1', <UserOutlined />),
+        getItem(<Link to={'/customer/list'}>{'Danh sách người dùng'}</Link>, '1', <UserOutlined />),
         getItem(<Link to={'/'}>{'Inbox'}</Link>, '1', <SiMinutemailer />),
         getItem(<Link to={'/'}>{'Danh sách admin'}</Link>, '1', <HiUserGroup />),
         getItem(<Link to={'/'}>{'Đăng xuất'}</Link>, '1', <HiOutlineLogout />)

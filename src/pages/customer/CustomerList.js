@@ -14,17 +14,15 @@ const dataSource = [
     {
         key: 1,
         id: 1,
-        name: 'Khúc hát tuổi thơ',
-        duration: 10,
-        author: 'Sơn Tùng',
+        name: 'ronaldo',
+        accountBalance: 10000,
         createdTime: formatTime(new Date())
     },
     {
         key: 2,
         id: 2,
-        name: 'Quên anh đi',
-        duration: 10,
-        author: 'Sơn Tùng',
+        name: 'messi',
+        accountBalance: 20000,
         createdTime: formatTime(new Date())
     },
 ];
@@ -54,7 +52,7 @@ const columns = [
         ],
     },
     {
-        title: 'Tên bài hát',
+        title: 'Tên người dùng',
         dataIndex: 'name',
         key: 'name',
         children: [
@@ -77,9 +75,9 @@ const columns = [
         ],
     },
     {
-        title: 'Độ dài bài hát',
-        dataIndex: 'duration',
-        key: 'duration',
+        title: 'Số dư tài khoản',
+        dataIndex: 'accountBalance',
+        key: 'accountBalance',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -93,31 +91,8 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'duration',
-                render: (value, record) => record.duration,
-                width: 150
-            },
-        ],
-    },
-    {
-        title: 'Tác giả',
-        dataIndex: 'author',
-        key: 'author',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'author',
-                render: (value, record) => record.author,
+                dataIndex: 'accountBalance',
+                render: (value, record) => record.accountBalance,
                 width: 150
             },
         ],
@@ -146,7 +121,7 @@ const columns = [
     },
 
 ];
-function SongList() {
+function CustomerList() {
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
@@ -188,7 +163,7 @@ function SongList() {
             <div className='button-header'>
                 <Button shape="round"
                     type="primary"
-                    onClick={() => navigate('/song/add')}
+                    onClick={() => navigate('/customer/add')}
                     className='bg-[#007dce] text-[white] flex items-center'
                 >
                     <FileAddOutlined className="mr-1" />  Thêm
@@ -281,4 +256,4 @@ function SongList() {
 
 }
 
-export default SongList
+export default CustomerList

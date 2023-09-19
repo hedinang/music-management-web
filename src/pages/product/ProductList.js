@@ -235,6 +235,7 @@ function ProductList() {
     const [disableDelete, setDisableDelete] = useState(true);
 
     const rowSelection = {
+        columnWidth: 15,
         selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
             if (selectedRows.length === 1) {

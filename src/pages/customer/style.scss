@@ -1,0 +1,32 @@
+.column-input-search {
+    font-size: 12px;
+}
+
+.category-list {
+    padding: 10px 10px 10px 10px;
+
+    .button-header {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 10px;
+        gap: 5px
+    }
+}
+
+.category-detail {
+    padding: 10px 10px 10px 10px;
+
+}
+
+.container-content {
+    margin-top: 19.5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cccccc;
+}
+
+audio::-webkit-media-controls-play-button,
+     audio::-webkit-media-controls-panel {
+     background-color: #34caf0;
+     color: #fff;
+     }

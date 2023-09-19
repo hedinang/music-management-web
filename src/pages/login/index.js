@@ -50,7 +50,7 @@ function Login(props) {
       );
       Cookies.set("token", result?.data.jwttoken, { path: "/", expires });
       toast.success(result?.message)
-      window.location.assign("/");
+      window.location.assign("/dashboard");
     } else {
       toast.error(result?.message)
     }

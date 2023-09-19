@@ -15,17 +15,20 @@ const dataSource = [
         key: 1,
         id: 1,
         name: 'Khúc hát tuổi thơ',
-        duration: 10,
-        author: 'Sơn Tùng',
-        createdTime: formatTime(new Date())
+        user: 'messi',
+        cost: 10000,
+        createdTime: formatTime(new Date()),
+        status: 'Đang sử dụng'
+
     },
     {
         key: 2,
         id: 2,
-        name: 'Quên anh đi',
-        duration: 10,
-        author: 'Sơn Tùng',
-        createdTime: formatTime(new Date())
+        name: 'Khúc hát tuổi thơ',
+        user: 'ronaldo',
+        cost: 20000,
+        createdTime: formatTime(new Date()),
+        status: 'Đang sử dụng'
     },
 ];
 
@@ -49,12 +52,12 @@ const columns = [
                 ),
                 dataIndex: 'id',
                 render: (value, record) => <div className='text-center'>{record.id}</div>,
-                width: 150
+                width: '20px'
             },
         ],
     },
     {
-        title: 'Tên bài hát',
+        title: 'Tên sản phẩm',
         dataIndex: 'name',
         key: 'name',
         children: [
@@ -71,15 +74,38 @@ const columns = [
                 ),
                 dataIndex: 'name',
                 render: (value, record) => record.name,
-                width: 400
+                width: '70px'
 
             },
         ],
     },
     {
-        title: 'Độ dài bài hát',
-        dataIndex: 'duration',
-        key: 'duration',
+        title: 'Người mua',
+        dataIndex: 'user',
+        key: 'user',
+        children: [
+            {
+                title: (
+                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                        <Input
+                            className="column-input-search"
+                            placeholder={'Tìm kiếm'}
+                        // value={querySearch.member_code}
+                        // onChange={(e) => onSearch('member_code', e.target.value)}
+                        />
+                    </div>
+                ),
+                dataIndex: 'user',
+                render: (value, record) => record.user,
+                width: '70px'
+
+            },
+        ],
+    },
+    {
+        title: 'Thành tiền',
+        dataIndex: 'cost',
+        key: 'cost',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -93,39 +119,17 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'duration',
-                render: (value, record) => record.duration,
-                width: 150
+                dataIndex: 'cost',
+                render: (value, record) => record.cost,
+                width: '50px'
             },
         ],
     },
     {
-        title: 'Tác giả',
-        dataIndex: 'author',
-        key: 'author',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'author',
-                render: (value, record) => record.author,
-                width: 150
-            },
-        ],
-    },
-    {
-        title: 'Ngày tạo',
+        title: 'Ngày mua',
         dataIndex: 'createdTime',
         key: 'createdTime',
+        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
                 title: (
@@ -140,13 +144,36 @@ const columns = [
                 ),
                 dataIndex: 'createdTime',
                 render: (value, record) => <div className='text-center'>{record.createdTime}</div>,
-                width: 300
+                width: '40px'
             },
         ],
     },
+    {
+        title: 'Trạng thái',
+        dataIndex: 'status',
+        key: 'status',
+        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+        children: [
+            {
+                title: (
+                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                        <Input
+                            className="column-input-search"
+                            placeholder={'Tìm kiếm'}
+                        // value={querySearch.member_code}
+                        // onChange={(e) => onSearch('member_code', e.target.value)}
+                        />
+                    </div>
+                ),
+                dataIndex: 'status',
+                render: (value, record) => record.status,
+                width: '30px'
+            },
+        ],
+    }
 
 ];
-function SongList() {
+function SaleList() {
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(0)
@@ -159,7 +186,7 @@ function SongList() {
     const [disableDelete, setDisableDelete] = useState(true);
 
     const rowSelection = {
-        columnWidth: 15,
+        columnWidth: '10px',
         selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
             if (selectedRows.length === 1) {
@@ -188,7 +215,7 @@ function SongList() {
             <div className='button-header'>
                 <Button shape="round"
                     type="primary"
-                    onClick={() => navigate('/song/add')}
+                    onClick={() => navigate('/product/add')}
                     className='bg-[#007dce] text-[white] flex items-center'
                 >
                     <FileAddOutlined className="mr-1" />  Thêm
@@ -239,7 +266,7 @@ function SongList() {
                     position: ['bottomCenter'],
                     style: { display: 'none' },
                 }}
-                // scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
+                scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
                 // onRow={(record: any) => ({
                 //     onDoubleClick: () => {
                 //         onDoubleClick(record);
@@ -281,4 +308,4 @@ function SongList() {
 
 }
 
-export default SongList
+export default SaleList
