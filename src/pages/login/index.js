@@ -4,9 +4,11 @@ import Cookies from "js-cookie";
 import { Button, Form, Input } from "antd";
 import apiFactory from "../../api";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const EXPIRY_TIME = process.env.REACT_APP_EXPIRY_TIME || "4";
 
 function Login(props) {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
   // function doLogin(){
   //   if (loading){
@@ -44,13 +46,14 @@ function Login(props) {
       }
     )
 
-    if (result.code === 0) {
+    if (result.status === 200) {
       let expires = new Date(
         new Date().setHours(new Date().getHours() + parseInt(EXPIRY_TIME))
       );
-      Cookies.set("token", result?.data.jwttoken, { path: "/", expires });
-      toast.success(result?.message)
-      window.location.assign("/dashboard");
+      Cookies.set("access_token", result?.data.access_token, { path: "/", expires });
+      toast.success('Welcome to Shop Music')
+      // window.location.assign("/dashboard");
+      navigate('/dashboard')
     } else {
       toast.error(result?.message)
     }

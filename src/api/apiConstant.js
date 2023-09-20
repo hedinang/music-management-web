@@ -1,3 +1,3 @@
-export const LOGIN = '/admin/authenticate';
+export const LOGIN = '/user/login';
 
 

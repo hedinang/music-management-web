@@ -22,7 +22,7 @@ const AuthLayout = ({ children }) => {
     // const { user } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
-        const token = Cookies.get('token')
+        const token = Cookies.get('access_token')
         if (token) {
             const decode = jwtDecode(token);
             if (decode && decode.exp && decode.exp < (Date.now() / 1000)) {

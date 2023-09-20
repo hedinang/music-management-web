@@ -5,11 +5,12 @@ import { useMemo, useState } from 'react';
 import { BsFillCartFill, BsFillDatabaseFill } from 'react-icons/bs';
 import { HiOutlineLogout, HiUserGroup } from 'react-icons/hi';
 import { SiMinutemailer } from 'react-icons/si';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
 
 
 import './style.scss';
+import Cookies from 'js-cookie';
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -20,6 +21,8 @@ function getItem(label, key, icon, children, type) {
         type,
     }
 }
+
+
 
 const UserPanel = () => {
     return <div className='user-panel'>
@@ -32,6 +35,7 @@ const UserPanel = () => {
 }
 
 const SideBar = () => {
+    const navigate = useNavigate()
     const { pathname } = useLocation();
     const isCommunity = pathname.includes('/community');
     const [collapsed, setCollapsed] = useState(false);
@@ -39,6 +43,10 @@ const SideBar = () => {
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
+    const logout = ()=>{
+        Cookies.remove('access_token')
+        navigate('/login')
+    }
 
     const items = [
         getItem(<Link to={'/dashboard'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
@@ -52,7 +60,7 @@ const SideBar = () => {
         getItem(<Link to={'/customer/list'}>{'Danh sách người dùng'}</Link>, '1', <UserOutlined />),
         getItem(<Link to={'/'}>{'Inbox'}</Link>, '1', <SiMinutemailer />),
         getItem(<Link to={'/'}>{'Danh sách admin'}</Link>, '1', <HiUserGroup />),
-        getItem(<Link to={'/'}>{'Đăng xuất'}</Link>, '1', <HiOutlineLogout />)
+        getItem(<Link onClick={logout} >{'Đăng xuất'}</Link>, '1', <HiOutlineLogout />)
     ]
 
     const selectedKey = useMemo(() => {
