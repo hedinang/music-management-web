@@ -141,7 +141,7 @@ function SaleDetail({ different }) {
 
         return <label
             htmlFor="img"
-            className="w-[250px] h-[150px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
+            className="w-[250px] h-[133px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
             style={{ border: '1px solid #5A96D7' }}>
             <input type="file" id="img" className="hidden" style={{ display: 'none' }} onChange={uploadImg}
                 // accept="audio/*, video/*" 

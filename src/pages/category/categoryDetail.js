@@ -64,7 +64,7 @@ function CategoryDetail({ different }) {
 
         return <label
             htmlFor="upload"
-            className="w-[250px] h-[150px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
+            className="w-[250px] h-[133px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
             style={{ border: '1px solid #5A96D7' }}>
             <input type="file" id="upload" className="hidden" style={{ display: 'none' }} accept="image/*" onChange={uploadImg} />
             <div className="flex flex-col items-center justify-center">

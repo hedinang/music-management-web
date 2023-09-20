@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from "react";
 import Cookies from "js-cookie";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Spin } from "antd";
 import apiFactory from "../../api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ function Login(props) {
   });
 
   const onFinish = async (values) => {
+    setLoading(true)
     const result = await apiFactory.authApi.login(
       {
         username: values.username,
@@ -46,13 +47,14 @@ function Login(props) {
       }
     )
 
+    setLoading(false)
+
     if (result.status === 200) {
       let expires = new Date(
         new Date().setHours(new Date().getHours() + parseInt(EXPIRY_TIME))
       );
       Cookies.set("access_token", result?.data.access_token, { path: "/", expires });
       toast.success('Welcome to Shop Music')
-      // window.location.assign("/dashboard");
       navigate('/dashboard')
     } else {
       toast.error(result?.message)
@@ -71,19 +73,34 @@ function Login(props) {
       >
         <Form
           initialValues={data} onFinish={onFinish} autoComplete="off"
+          layout="vertical"
         >
           <p className="login-box-msg">Đăng nhập tài khoản quản trị</p>
 
           <div >
-            <Form.Item name="username" label="Tên đăng nhập" rules={[{ required: true }]}>
-              <Input />
+            <Form.Item name="username" label="Tên đăng nhập"
+              rules={[
+                {
+                  required: true,
+                  message: 'Bắt buộc!',
+                },
+              ]}
+            >
+              <Input disabled={loading} />
             </Form.Item>
-            <Form.Item name="password" label="Mật khẩu" rules={[{ required: true }]}>
-              <Input type="password" />
+            <Form.Item name="password" label="Mật khẩu"
+              rules={[
+                {
+                  required: true,
+                  message: 'Bắt buộc!',
+                },
+              ]}
+            >
+              <Input type="password" disabled={loading} />
             </Form.Item>
             <Form.Item>
-              <Button className="button" htmlType="submit">
-                {'Đăng Nhập'}
+              <Button className="button w-[100px]" htmlType="submit">
+                {loading ? <Spin /> : 'Đăng Nhập'}
               </Button>
             </Form.Item>
           </div>

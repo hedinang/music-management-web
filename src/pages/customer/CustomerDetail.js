@@ -9,6 +9,8 @@ import { FaMusic } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { Option } from "antd/es/mentions";
+import { NumericFormat } from 'react-number-format';
+import { toast } from 'react-toastify';
 
 
 
@@ -80,37 +82,48 @@ function CustomerDetail({ different }) {
     const [form] = Form.useForm()
     const [initalData, setInitialData] = useState({
         name: '',
-        author: '',
-        category: '',
+        username: '',
+        password: '',
+        rePassword: '',
         img: {
             url: '',
             file: null
         },
-        song: {
-            url: '',
-            file: null
-        }
+        email: '',
+        balance: 0
 
     })
-    const [categoryList, setCategoryList] = useState([])
-    const chooseCategory = (e) => {
-        const u = categoryList.find(f => f.value === e)
-        // setChoosedUser(u?.value)
-    }
-    const onFinish = () => {
-        // apiFactory.categoryApi.create({
-        //     title: musicType,
-        //     thumb: img
-        // })
+
+    const onFinish = async (values) => {
+        if (values?.password !== values?.rePassword) {
+            toast.error('Mật khẩu phải khớp với mật khẩu xác nhận!')
+            return
+        }
+        let unitPrice = values?.balance
+        if (typeof (values?.balance) !== 'number') {
+            unitPrice = Number(values?.balance?.replaceAll(',', ''))
+          }
+        const result = await apiFactory.customerApi.create({
+            name: values?.name,
+            username: values?.username,
+            password: values?.password,
+            // img: {
+            //     url: '',
+            //     file: null
+            // },
+            email: values?.email,
+            balance: unitPrice
+        })
+        if (result.status === 200) {
+            toast.success('Tạo khách hàng thành công')
+            navigate('/customer/list')
+        } else {
+            toast.error(result?.message)
+        }
     }
 
     const CoverImage = useCallback(({ value, onChange }) => {
         const uploadImg = (e) => {
-            // onChange({
-            //     ...value,
-            //     file: e.target.files[0]
-            // })
-
             const file = e.target.files[0];
             const reader = new FileReader();
 
@@ -121,13 +134,12 @@ function CustomerDetail({ different }) {
                         file: e.target.files[0],
                         url: reader.result
                     })
-                };
+                }
             } else {
                 onChange({
                     file: null,
                     url: ''
                 })
-
             }
         }
 
@@ -141,7 +153,7 @@ function CustomerDetail({ different }) {
 
         return <label
             htmlFor="img"
-            className="w-[250px] h-[150px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
+            className="w-[250px] h-[133px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
             style={{ border: '1px solid #5A96D7' }}>
             <input type="file" id="img" className="hidden" style={{ display: 'none' }} onChange={uploadImg}
                 // accept="audio/*, video/*" 
@@ -165,65 +177,12 @@ function CustomerDetail({ different }) {
         </label>
     }, [])
 
-    const FileMusic = useCallback(({ value, onChange }) => {
-        const uploadMusic = (e) => {
-            // onChange({
-            //     ...value,
-            //     file: e.target.files[0]
-            // })
 
-            const file = e.target.files[0];
-            const reader = new FileReader();
-
-            if (file) {
-                reader.readAsDataURL(file);
-                reader.onloadend = () => {
-                    onChange({
-                        file: e.target.files[0],
-                        url: reader.result
-                    })
-                };
-            } else {
-                onChange({
-                    file: null,
-                    url: ''
-                })
-
-            }
-        }
-
-        const removeImg = (e) => {
-            e.preventDefault()
-            onChange({
-                file: null,
-                url: ''
-            })
-        }
-
-        return <div className='flex flex-row items-center gap-[10px]'>
-
-            <label
-                htmlFor="music"
-                className="w-[100px] h-[100px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
-                style={{ border: '1px solid #5A96D7' }}>
-                <input type="file" id="music" className="hidden" style={{ display: 'none' }}
-                    accept="audio/*, video/*" onChange={uploadMusic} />
-                <div className="flex flex-row items-center justify-center gap-[5px]">
-                    <div className='text-[30px]'>+</div>
-                    <FaMusic size={30} />
-                </div>
-            </label>
-            {value.url && <audio controls={true} src={value.url} />}
-            {value.url && <DeleteFilled className='text-[red]' onClick={removeImg} />}
-        </div>
-
-    }, [])
     return <div className='category-detail'>
         <Form
             initialValues={initalData}
             onFinish={onFinish}
             form={form}
-            // labelCol={{ style: { width: 120 } }}
             layout="vertical"
 
         >
@@ -231,6 +190,12 @@ function CustomerDetail({ different }) {
                 <Col span={11}>
                     <Form.Item label="Tên người dùng"
                         name="name"
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Tên đăng nhập"
+                        name="username"
                         rules={[
                             {
                                 required: true,
@@ -240,17 +205,6 @@ function CustomerDetail({ different }) {
                         <Input />
                     </Form.Item>
 
-
-
-                    <Form.Item label="Số dư tài khoản"
-                        name="accountBalance"
-                    >
-                        <Input />
-                    </Form.Item>
-
-                </Col>
-                <Col span={2} />
-                <Col span={11}>
                     <Form.Item label="Mật khẩu"
                         name="password"
                         rules={[
@@ -261,6 +215,49 @@ function CustomerDetail({ different }) {
                         ]}>
                         <Input.Password />
                     </Form.Item>
+                    <Form.Item label="Xác nhận mật khẩu"
+                        name="rePassword"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Bắt buộc!',
+                            },
+                        ]}>
+                        <Input.Password />
+                    </Form.Item>
+                </Col>
+                <Col span={2} />
+                <Col span={11}>
+                    <Form.Item
+                        label="Ảnh đại diện"
+                        name="img"
+                        className="mb-[8px]"
+                        required={false}
+                    >
+                        <CoverImage />
+                    </Form.Item>
+
+                    <Form.Item label="Email"
+                        name="email"
+                    >
+                        <Input type='email' />
+                    </Form.Item>
+
+                    <Form.Item label="Số dư tài khoản"
+                        name="balance"
+                    >
+                        <NumericFormat
+                            onKeyPress={(event) => {
+                                if (!/[0-9.]/.test(event.key)) {
+                                    event.preventDefault();
+                                }
+                            }}
+                            // value={value?.unitPrice} disabled={difference.type === 'view' || !value?.unitPriceSetting}
+                            // onChange={onChangeUnitPrice} 
+                            customInput={Input}
+                            thousandsGroupStyle="thousand" thousandSeparator="," decimalScale={2}
+                        />
+                    </Form.Item>
                 </Col>
 
             </Row>
@@ -270,7 +267,7 @@ function CustomerDetail({ different }) {
                 <div className="flex justify-between gap-[5px]">
                     <Button className='bg-[#868e96] text-white ml-[230px]' onClick={() => navigate('/customer/list')}>Quay lại</Button>
                     <div className='flex gap-[5px]'>
-                        {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white'>Lưu</Button>}
+                        {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white' htmlType="submit">Lưu</Button>}
                         {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white'>Sửa</Button>}
                         {different.type === 'view' && <Button className='bg-[#ed2727] text-white'>Xoá</Button>}
                     </div>

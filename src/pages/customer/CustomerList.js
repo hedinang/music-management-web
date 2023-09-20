@@ -9,45 +9,30 @@ import { FiRefreshCcw } from 'react-icons/fi';
 import { DeleteOutlined, FileAddOutlined, SearchOutlined } from '@ant-design/icons';
 import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
+import apiFactory from '../../api';
 
-const dataSource = [
-    {
-        key: 1,
-        id: 1,
-        name: 'ronaldo',
-        accountBalance: 10000,
-        createdTime: formatTime(new Date())
-    },
-    {
-        key: 2,
-        id: 2,
-        name: 'messi',
-        accountBalance: 20000,
-        createdTime: formatTime(new Date())
-    },
-];
 
 const columns = [
     {
         title: 'STT',
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'index',
+        key: 'index',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
                 title: (
                     <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
+                        {/* <Input
                             className="column-input-search"
                             placeholder={'Tìm kiếm'}
                         // value={querySearch.member_code}
                         // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
+                        /> */}
                     </div>
                 ),
-                dataIndex: 'id',
-                render: (value, record) => <div className='text-center'>{record.id}</div>,
-                width: 150
+                dataIndex: 'index',
+                render: (value, record) => <div className='text-center'>{record.index}</div>,
+                width: 40
             },
         ],
     },
@@ -69,15 +54,61 @@ const columns = [
                 ),
                 dataIndex: 'name',
                 render: (value, record) => record.name,
-                width: 400
+                width: 200
+
+            },
+        ],
+    },
+    {
+        title: 'Tên đăng nhập',
+        dataIndex: 'username',
+        key: 'username',
+        children: [
+            {
+                title: (
+                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                        <Input
+                            className="column-input-search"
+                            placeholder={'Tìm kiếm'}
+                        // value={querySearch.member_code}
+                        // onChange={(e) => onSearch('member_code', e.target.value)}
+                        />
+                    </div>
+                ),
+                dataIndex: 'username',
+                render: (value, record) => record.username,
+                width: 200
+
+            },
+        ],
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+        children: [
+            {
+                title: (
+                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                        <Input
+                            className="column-input-search"
+                            placeholder={'Tìm kiếm'}
+                        // value={querySearch.member_code}
+                        // onChange={(e) => onSearch('member_code', e.target.value)}
+                        />
+                    </div>
+                ),
+                dataIndex: 'email',
+                render: (value, record) => record.email,
+                width: 200
 
             },
         ],
     },
     {
         title: 'Số dư tài khoản',
-        dataIndex: 'accountBalance',
-        key: 'accountBalance',
+        dataIndex: 'balance',
+        key: 'balance',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -91,16 +122,16 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'accountBalance',
-                render: (value, record) => record.accountBalance,
+                dataIndex: 'balance',
+                render: (value, record) => record.balance,
                 width: 150
             },
         ],
     },
     {
         title: 'Ngày tạo',
-        dataIndex: 'createdTime',
-        key: 'createdTime',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
         children: [
             {
                 title: (
@@ -113,8 +144,8 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'createdTime',
-                render: (value, record) => <div className='text-center'>{record.createdTime}</div>,
+                dataIndex: 'createdAt',
+                render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
                 width: 300
             },
         ],
@@ -124,7 +155,7 @@ const columns = [
 function CustomerList() {
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
     const [copyId, setCopyId] = useState(-1);
 
@@ -132,9 +163,10 @@ function CustomerList() {
     const [selectedRow, setSelectedRow] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [disableDelete, setDisableDelete] = useState(true);
+    const [customerList, setCustomerList] = useState([])
 
     const rowSelection = {
-        columnWidth: 15,
+        columnWidth: '30px',
         selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
             if (selectedRows.length === 1) {
@@ -152,10 +184,23 @@ function CustomerList() {
             setSelectedRow(selectedRows.map((e) => e.key));
         },
         preserveSelectedRowKeys: true,
-    };
-    useEffect(() => {
+    }
 
-    }, [])
+    const fetchData = async () => {
+        const result = await apiFactory.customerApi.getList({ limit, page })
+        setCustomerList(result?.data?.map((e, i) => (
+            {
+                index: (page - 1) * limit + i + 1,
+                username: e?.username,
+                createdAt: formatTime(e?.createdAt),
+                balance: e?.balance ? e?.balance : 0
+            }
+        )))
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [page, limit])
 
     return <div className='category-list'>
 
@@ -205,7 +250,7 @@ function CustomerList() {
                 </Button>
             </div>
             <Table
-                dataSource={dataSource}
+                dataSource={customerList}
                 columns={columns}
                 pagination={{
                     defaultPageSize: 10,
@@ -214,7 +259,7 @@ function CustomerList() {
                     position: ['bottomCenter'],
                     style: { display: 'none' },
                 }}
-                // scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
+                scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
                 // onRow={(record: any) => ({
                 //     onDoubleClick: () => {
                 //         onDoubleClick(record);
