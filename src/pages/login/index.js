@@ -5,6 +5,7 @@ import { Button, Form, Input, Spin } from "antd";
 import apiFactory from "../../api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
 const EXPIRY_TIME = process.env.REACT_APP_EXPIRY_TIME || "4";
 
 function Login(props) {
@@ -100,7 +101,7 @@ function Login(props) {
             </Form.Item>
             <Form.Item>
               <Button className="button w-[100px]" htmlType="submit">
-                {loading ? <Spin /> : 'Đăng Nhập'}
+                {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} /> : 'Đăng Nhập'}
               </Button>
             </Form.Item>
           </div>
