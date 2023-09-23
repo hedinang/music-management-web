@@ -24,11 +24,15 @@ function CategoryDetail({ different }) {
 
     })
     const onFinish = async (values) => {
+        if (values?.musicType.trim() === '') {
+            return toast.error('Tên loại nhạc không được để trống!')
+        }
+
         let result
         if (different.type === 'edit') {
             result = await apiFactory.categoryApi.update({
                 id: param.id,
-                name: values?.musicType,
+                name: values?.musicType.trim(),
                 file: values?.img?.file,
                 origin_url: values?.img?.url
             })
@@ -41,7 +45,7 @@ function CategoryDetail({ different }) {
             })
         }
 
-        if (result.status === 200) {
+        if (result?.status === 200) {
             if (different.type === 'add') {
                 toast.success('Tạo danh mục nhạc thành công')
             }
