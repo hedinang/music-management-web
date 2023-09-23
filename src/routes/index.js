@@ -40,7 +40,7 @@ const router = createBrowserRouter([
         // errorElement: <ErrorElement />,
         children: [
             {
-                path: '/dashboard',
+                path: '/',
                 element: <Dashboard />
             },
 
@@ -54,12 +54,12 @@ const router = createBrowserRouter([
                     different={{ type: 'add' }} />
             },
             {
-                path: '/category/edit',
+                path: '/category/edit/:id',
                 element: <CategoryDetail
                     different={{ type: 'edit' }} />
             },
             {
-                path: '/category/view',
+                path: '/category/:id',
                 element: <CategoryDetail
                     different={{ type: 'view' }} />
             },

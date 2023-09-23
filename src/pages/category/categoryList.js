@@ -9,28 +9,29 @@ import { FiRefreshCcw } from 'react-icons/fi';
 import { DeleteOutlined, FileAddOutlined, SearchOutlined } from '@ant-design/icons';
 import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
+import apiFactory from '../../api';
 
-const dataSource = [
-    {
-        key: 1,
-        id: 1,
-        name: 'Nhạc trẻ',
-        createdTime: formatTime(new Date())
-    },
-    {
-        key: 2,
-        id: 2,
-        name: 'Nhạc vàng',
-        createdTime: formatTime(new Date())
+// const dataSource = [
+//     {
+//         key: 1,
+//         id: 1,
+//         name: 'Nhạc trẻ',
+//         createdTime: formatTime(new Date())
+//     },
+//     {
+//         key: 2,
+//         id: 2,
+//         name: 'Nhạc vàng',
+//         createdTime: formatTime(new Date())
 
-    },
-];
+//     },
+// ];
 
 const columns = [
     {
         title: 'STT',
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'index',
+        key: 'index',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -44,8 +45,8 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'id',
-                render: (value, record) => <div className='text-center'>{record.id}</div>,
+                dataIndex: 'index',
+                render: (value, record) => <div className='text-center'>{record.index}</div>,
                 width: 150
             },
         ],
@@ -75,8 +76,8 @@ const columns = [
     },
     {
         title: 'Ngày tạo',
-        dataIndex: 'createdTime',
-        key: 'createdTime',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
         children: [
             {
                 title: (
@@ -89,8 +90,8 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'createdTime',
-                render: (value, record) => <div className='text-center'>{record.createdTime}</div>,
+                dataIndex: 'createdAt',
+                render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
                 width: 500
             },
         ],
@@ -98,9 +99,10 @@ const columns = [
 
 ];
 function CategoryList() {
+    const [categoryList, setCategoryList] = useState([])
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
     const [copyId, setCopyId] = useState(-1);
 
@@ -129,9 +131,31 @@ function CategoryList() {
         },
         preserveSelectedRowKeys: true,
     };
-    useEffect(() => {
 
-    }, [])
+    const fetchData = async () => {
+
+        const result = await apiFactory.categoryApi.getList({
+            limit: limit,
+            page: page
+        })
+
+        setCategoryList(result?.data?.map((e, i) => (
+            {
+                id: e?.id,
+                index: (page - 1) * limit + i + 1,
+                name: e?.name,
+                createdAt: formatTime(e?.createdAt),
+            }
+        )))
+    }
+
+    const onDoubleClick = (record) => {
+        navigate(`/category/${record.id}`);
+    };
+
+    useEffect(() => {
+        fetchData()
+    }, [limit, page])
 
     return <div className='category-list'>
 
@@ -181,7 +205,7 @@ function CategoryList() {
                 </Button>
             </div>
             <Table
-                dataSource={dataSource}
+                dataSource={categoryList}
                 columns={columns}
                 pagination={{
                     defaultPageSize: 10,
@@ -191,11 +215,11 @@ function CategoryList() {
                     style: { display: 'none' },
                 }}
                 // scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
-                // onRow={(record: any) => ({
-                //     onDoubleClick: () => {
-                //         onDoubleClick(record);
-                //     },
-                // })}
+                onRow={(record) => ({
+                    onDoubleClick: () => {
+                        onDoubleClick(record);
+                    },
+                })}
                 // rowSelection={column.length > 0 ? { ...rowSelection } : null}
                 showSorterTooltip={false}
                 bordered

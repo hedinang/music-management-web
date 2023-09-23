@@ -1,27 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LOGIN } from './apiConstant';
+import { CATEGORY } from './apiConstant';
 import BaseApi from './baseApi';
 
 class CategoryApi extends BaseApi {
     getList(param) {
-        if (param.page) {
-            return this.get(param);
-        }
+        return this.post(`${CATEGORY}/list`, param);
     }
-    // getOneRecord(id: string): Promise<DatabasesData | null> {
-    //     if (id) {
-    //         return this.get<DatabasesData>(`${DBS}/${id}`);
-    //     }
-    //     return Promise.resolve(null);
-    // }
+
+    getById(id) {
+        if (id) {
+            return this.get(`${CATEGORY}/${id}`);
+        }
+        return Promise.resolve(null);
+    }
     // updateRecord(
     //     id: string,
     //     data: bodyRequestCreateDatabase,
     // ): Promise<DatabasesData> {
     //     return this.put<DatabasesData>(`${DBS}/${id}`, data);
     // }
-    create(data) {
-        return this.post(data);
+
+    update(param) {
+        return this.put(`${CATEGORY}/update`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+    }
+
+    create(param) {
+        return this.post(`${CATEGORY}/add`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     }
     // deleteRecord(id: string): Promise<DatabasesData> {
     //     return this.deleteMany<DatabasesData>(DBS, { id: [id] });

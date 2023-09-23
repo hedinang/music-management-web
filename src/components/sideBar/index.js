@@ -49,7 +49,7 @@ const SideBar = () => {
     }
 
     const items = [
-        getItem(<Link to={'/dashboard'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
+        getItem(<Link to={'/'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
         getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
         getItem(<Link to={'/song/list'}>{'Quản lý danh sách nhạc'}</Link>, '1', <BsFillDatabaseFill />),
         getItem(<Link to={'/sale/list'}>{'Danh sách đã bán'}</Link>, '1', <BsFillCartFill />),

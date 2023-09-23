@@ -56,7 +56,7 @@ function Login(props) {
       );
       Cookies.set("access_token", result?.data.access_token, { path: "/", expires });
       toast.success('Welcome to Shop Music')
-      navigate('/dashboard')
+      navigate('/')
     } else {
       toast.error(result?.message)
     }
