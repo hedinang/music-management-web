@@ -13,12 +13,6 @@ class CategoryApi extends BaseApi {
         }
         return Promise.resolve(null);
     }
-    // updateRecord(
-    //     id: string,
-    //     data: bodyRequestCreateDatabase,
-    // ): Promise<DatabasesData> {
-    //     return this.put<DatabasesData>(`${DBS}/${id}`, data);
-    // }
 
     update(param) {
         return this.put(`${CATEGORY}/update`, param, {
@@ -35,8 +29,9 @@ class CategoryApi extends BaseApi {
             }
         });
     }
-    // deleteRecord(id: string): Promise<DatabasesData> {
-    //     return this.deleteMany<DatabasesData>(DBS, { id: [id] });
-    // }
+
+    delete(idList) {
+        return this.deleteMany(`${CATEGORY}/delete`, idList);
+    }
 }
 export default CategoryApi;
