@@ -2,7 +2,8 @@
 import { DashboardOutlined, GiftOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
 import { Layout, Menu, Avatar } from 'antd';
 import { useMemo, useState } from 'react';
-import { BsFillCartFill, BsFillDatabaseFill } from 'react-icons/bs';
+import { BsFillCartFill } from 'react-icons/bs';
+import { FaMusic } from 'react-icons/fa';
 import { HiOutlineLogout, HiUserGroup } from 'react-icons/hi';
 import { SiMinutemailer } from 'react-icons/si';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -50,8 +51,8 @@ const SideBar = () => {
 
     const items = [
         getItem(<Link to={'/'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
-        getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
-        getItem(<Link to={'/song/list'}>{'Quản lý danh sách nhạc'}</Link>, '1', <BsFillDatabaseFill />),
+        // getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
+        getItem(<Link to={'/song/list'}>{'Quản lý danh sách nhạc'}</Link>, '1', <FaMusic />),
         getItem(<Link to={'/sale/list'}>{'Danh sách đã bán'}</Link>, '1', <BsFillCartFill />),
         getItem(<Link to={'/category/list'}>{'Danh mục'}</Link>, '1', <UnorderedListOutlined />),
         getItem(<Link to={'/'}>{'Mã quà tặng'}</Link>, '1', <GiftOutlined />)

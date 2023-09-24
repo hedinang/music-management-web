@@ -133,13 +133,12 @@ function CategoryList() {
     };
 
     const fetchData = async () => {
-
         const result = await apiFactory.categoryApi.getList({
             limit: limit,
             page: page
         })
 
-        setCategoryList(result?.data?.map((e, i) => (
+        setCategoryList(result?.data?.items?.map((e, i) => (
             {
                 id: e?.id,
                 index: (page - 1) * limit + i + 1,
@@ -147,6 +146,8 @@ function CategoryList() {
                 createdAt: formatTime(e?.createdAt),
             }
         )))
+        
+        setTotalItems(result?.data?.total_items)
     }
 
     const onDoubleClick = (record) => {

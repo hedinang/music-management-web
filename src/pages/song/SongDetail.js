@@ -2,78 +2,154 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Button, Col, Form, Input, Row, Select, Spin, Tag } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
 import { FaMusic } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { Option } from "antd/es/mentions";
+import { NumericFormat } from 'react-number-format';
+import { formatTime } from '../../utils/formatTime';
+import { toast } from 'react-toastify';
 
 
 
 
-const AsyncSelect = ({ chooseCategory }) => {
+
+async function getDuration(file) {
+    const url = URL.createObjectURL(file);
+
+    return new Promise((resolve) => {
+        const audio = document.createElement("audio");
+        audio.muted = true;
+        const source = document.createElement("source");
+        source.src = url; //--> blob URL
+        audio.preload = "metadata";
+        audio.appendChild(source);
+        audio.onloadedmetadata = function () {
+            resolve(audio.duration)
+        };
+    });
+}
+
+const AsyncSelect = ({ value, onChange }) => {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     // const [currentTotal, setCurrentTotal] = useState(0)
     const [loading, setLoading] = useState(false)
-    const [users, setUsers] = useState([])
-    const fetchUserList = async () => {
-        const data = await apiFactory.nursingApi.getList({
+    const [categoryList, setCategoryList] = useState([])
+    const fetchCategoryList = async () => {
+        const result = await apiFactory.categoryApi.getList({
             per: limit,
             page: page,
         })
-        if (data) {
-            setUsers(data.nursing_staffs.map((e) => <Option key={e.id} value={e.id}>
-                {e.name_kana}
-            </Option>))
-            setTotalItems(data.total_items)
+
+        // setCategoryList(result?.data?.items?.map((e, i) => (
+        //     {
+        //         id: e?.id,
+        //         index: (page - 1) * limit + i + 1,
+        //         name: e?.name,
+        //         createdAt: formatTime(e?.createdAt),
+        //     }
+        // )))
+        if (result?.data?.items) {
+            setCategoryList(result?.data?.items?.map((e) => ({
+                component: <Option key={e.id} value={e.id}>
+                    {e.name}
+                </Option>,
+                disabled: false,
+                value: e.id,
+                label: e.name
+            })))
+            setTotalItems(result?.data?.total_items)
         }
 
     }
-    // const onscroll = async (event: any) => {
-    //     if ((event.currentTarget.scrollTop + event.currentTarget.clientHeight) >= event.currentTarget.scrollHeight &&
-    //         (page * limit) < totalItems && !loading) {
-    //         users.push(<Option key={'loading'} value={'loading'} disabled>
-    //             <Spin className="absolute left-[50%]" />
-    //         </Option>)
-    //         setUsers([...users])
-    //         setLoading(true)
-    //         setTimeout(async () => {
-    //             const data = await apiFactory.nursingApi.getList({
-    //                 per: limit,
-    //                 page: page + 1,
-    //             })
-    //             if (data) {
-    //                 users.pop()
-    //                 const newUsers = users.concat(data.nursing_staffs.map((e: any) => <Option key={e.id} value={e.id}>
-    //                     {e.name_kana}
-    //                 </Option>))
-    //                 setUsers(newUsers)
-    //                 setPage(page + 1)
-    //                 setTotalItems(data.total_items)
-    //             }
-    //             setLoading(false)
-    //         }, 500)
 
-    //     }
-    // }
+    const removeItem = (e) => {
+        const index = value.findIndex((f) => f.value === e)
+        // value.splice(index, 1)
+        const clonePatientList = categoryList.map((f) => {
+            if (f.value === e) {
+                f.disabled = false
+            }
+            return f
+        }
+        )
+        setCategoryList(clonePatientList)
+        // onChange([...value]);
+    }
+    const onscroll = async (event) => {
+        if ((event.currentTarget.scrollTop + event.currentTarget.clientHeight) >= event.currentTarget.scrollHeight &&
+            (page * limit) < totalItems && !loading) {
+            categoryList.push(<Option key={'loading'} value={'loading'} disabled>
+                <Spin className="absolute left-[50%]" />
+            </Option>)
+            setCategoryList([...categoryList])
+            setLoading(true)
+            setTimeout(async () => {
+                const data = await apiFactory.categoryApi.getList({
+                    per: limit,
+                    page: page + 1,
+                })
+                if (data) {
+                    categoryList.pop()
+                    const newCategoryList = categoryList.concat(data?.data?.items.map((e) => ({
+                        component: <Option key={e.id} value={e.id}>
+                            {e.name}
+                        </Option>,
+                        disabled: false,
+                        value: e.id,
+                        label: e.name
+                    })))
+                    setCategoryList(newCategoryList)
+                    setPage(page + 1)
+                    setTotalItems(data?.data?.total_items)
+                }
+                setLoading(false)
+            }, 500)
+
+        }
+    }
     useEffect(() => {
-        // fetchUserList()
+        fetchCategoryList()
     }, [])
     return <>
         <Select
-            onChange={(e) => chooseCategory(e)}
+            // onChange={(e) => chooseCategory(e)}
             onPopupScroll={onscroll}
+            onChange={(e) => {
+                const category = categoryList.find((f) => f.value === e)
+                value.push(category)
+                const cloneCategoryList = categoryList.map((f) => {
+                    if (f.value === e) f.disabled = true
+                    return f;
+                })
+
+                setCategoryList(cloneCategoryList)
+                onChange([...value]);
+            }}
         >
-            {users}
+            {categoryList.filter(e => e.disabled === false).map(e => e.component)}
         </Select>
+        <div className="patient-list">
+            {value?.map((e) => {
+                return <Tag
+                    color={'blue'}
+                    closable={true}
+                    onClose={() => removeItem(e.value)}
+                    // style={{ marginRight: 3 }}
+                    className='h-[30px] text-[15px] mt-[5px]'
+                >
+                    {e.label}
+                </Tag>
+            })}
+        </div>
     </>
 
 }
-
 
 function SongDetail({ different }) {
     const navigate = useNavigate()
@@ -81,7 +157,7 @@ function SongDetail({ different }) {
     const [initalData, setInitialData] = useState({
         name: '',
         author: '',
-        category: '',
+        category: [],
         img: {
             url: '',
             file: null
@@ -89,20 +165,55 @@ function SongDetail({ different }) {
         song: {
             url: '',
             file: null
-        }
+        },
+        unit_price: 0,
+        totalPrice: 0,
+        duration: 0
 
     })
+    const [totalPrice, setTotalPrice] = useState(0)
     const [categoryList, setCategoryList] = useState([])
     const chooseCategory = (e) => {
         const u = categoryList.find(f => f.value === e)
         // setChoosedUser(u?.value)
     }
-    const onFinish = () => {
-        // apiFactory.categoryApi.create({
-        //     title: musicType,
-        //     thumb: img
-        // })
+    const onFinish = async (values) => {
+        let result
+        // if (different.type === 'edit') {
+        //     result = await apiFactory.songApi.update({
+        //         id: param.id,
+        //         name: values?.musicType.trim(),
+        //         file: values?.img?.file,
+        //         origin_url: values?.img?.url
+        //     })
+
+        // }
+        if (different.type === 'add') {
+            result = await apiFactory.songApi.create({
+                name: values?.name,
+                author: values?.author,
+                category: values?.category.map(e => e.value),
+                img: values?.img.file,
+                audio: values?.song.file,
+                unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
+            })
+        }
+
+        if (result?.status === 200) {
+            if (different.type === 'add') {
+                toast.success('Tạo danh mục nhạc thành công')
+            }
+
+            if (different.type === 'edit') {
+                toast.success('Cập nhật danh mục nhạc thành công')
+            }
+
+            navigate('/category/list')
+        } else {
+            toast.error(result?.message)
+        }
     }
+
 
     const CoverImage = useCallback(({ value, onChange }) => {
         const uploadImg = (e) => {
@@ -113,7 +224,7 @@ function SongDetail({ different }) {
 
             const file = e.target.files[0];
             const reader = new FileReader();
-            
+
             if (file) {
                 reader.readAsDataURL(file);
                 reader.onloadend = () => {
@@ -127,7 +238,7 @@ function SongDetail({ different }) {
                     file: null,
                     url: ''
                 })
-                
+
             }
         }
 
@@ -166,15 +277,22 @@ function SongDetail({ different }) {
     }, [])
 
     const FileMusic = useCallback(({ value, onChange }) => {
-        const uploadMusic = (e) => {
+        const uploadMusic = async (e) => {
             // onChange({
             //     ...value,
             //     file: e.target.files[0]
             // })
 
             const file = e.target.files[0];
+            const duration = await getDuration(file)
+            let totalPrice = 0
+            if (initalData.unit_price) {
+                totalPrice = Math.round(duration / 60) * initalData.unit_price
+            }
+            setInitialData({ ...initalData, duration: Math.round(duration / 60), totalPrice: totalPrice })
+
             const reader = new FileReader();
-            
+
             if (file) {
                 reader.readAsDataURL(file);
                 reader.onloadend = () => {
@@ -188,7 +306,7 @@ function SongDetail({ different }) {
                     file: null,
                     url: ''
                 })
-                
+
             }
         }
 
@@ -217,7 +335,14 @@ function SongDetail({ different }) {
             {value.url && <DeleteFilled className='text-[red]' onClick={removeImg} />}
         </div>
 
-    }, [])
+    }, [initalData])
+
+    const onChangeUnitPrice = (e) => {
+        const unitPrice = Number(e.target.value.replaceAll(',', ''))
+        const totalPrice = initalData.duration * unitPrice
+        setInitialData({ ...initalData, unit_price: unitPrice, totalPrice: totalPrice })
+    }
+
     return <div className='category-detail'>
         <Form
             initialValues={initalData}
@@ -259,10 +384,54 @@ function SongDetail({ different }) {
                                 message: 'Bắt buộc!',
                             },
                         ]}>
-                        <AsyncSelect chooseCategory={chooseCategory} />
+                        <AsyncSelect />
 
                     </Form.Item>
 
+                    <Row>
+                        <Col span={11}>
+                            <Form.Item label="Giá / 1 phút VNĐ"
+                                name="unitPrice"
+                            // rules={[
+                            //     ({ getFieldValue }) => ({
+                            //         validator(rule, value) {
+                            //             if (value !== '' && value.trim() === '') {
+                            //                 return Promise.reject('この項目は必須です')
+                            //             }
+                            //             return Promise.resolve()
+                            //         }
+                            //     })
+                            // ]}
+                            >
+                                <NumericFormat
+                                    onKeyPress={(event) => {
+                                        if (!/[0-9.]/.test(event.key)) {
+                                            event.preventDefault();
+                                        }
+                                    }}
+                                    // value={value?.unitPrice} disabled={difference.type === 'view' || !value?.unitPriceSetting}
+                                    onChange={onChangeUnitPrice}
+
+                                    customInput={Input}
+                                    thousandsGroupStyle="thousand" thousandSeparator="," decimalScale={2}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={2} />
+                        <Col span={11}>
+                            <Form.Item label="Giá cả bài VNĐ"
+                            // name="totalPrice"
+                            >
+                                <NumericFormat
+                                    disabled
+                                    customInput={Input}
+                                    thousandsGroupStyle="thousand" thousandSeparator="," decimalScale={2}
+                                    value={initalData.totalPrice}
+                                />
+                            </Form.Item>
+                        </Col>
+
+                    </Row>
                 </Col>
                 <Col span={2} />
                 <Col span={11}>
@@ -292,7 +461,7 @@ function SongDetail({ different }) {
                 <div className="flex justify-between gap-[5px]">
                     <Button className='bg-[#868e96] text-white ml-[230px]' onClick={() => navigate('/song/list')}>Quay lại</Button>
                     <div className='flex gap-[5px]'>
-                        {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white'>Lưu</Button>}
+                        {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white' htmlType="submit">Lưu</Button>}
                         {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white'>Sửa</Button>}
                         {different.type === 'view' && <Button className='bg-[#ed2727] text-white'>Xoá</Button>}
                     </div>
