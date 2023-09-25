@@ -68,16 +68,15 @@ function SongDetail({ different }) {
 
         // }
         if (different.type === 'add') {
-            // result = await apiFactory.songApi.create({
-            //     name: values?.name,
-            //     author: values?.author,
-            //     category: values?.category.map(e => e.value),
-            //     img: values?.img.file,
-            //     audio: values?.song.file,
-            //     duration: initalData.duration,
-            //     unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
-            // })
-            console.log('aaa')
+            result = await apiFactory.songApi.create({
+                name: values?.name,
+                author: values?.author,
+                category: values?.category.map(e => e.value),
+                img: values?.img.file,
+                audio: values?.song.file,
+                duration: initalData.duration,
+                unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
+            })
         }
 
         if (result?.status === 200) {
