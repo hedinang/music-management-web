@@ -211,7 +211,7 @@ function SongDetail({ different }) {
     const onChangeUnitPrice = (e) => {
         const unitPrice = Number(e.target.value.replaceAll(',', ''))
         const totalPrice = initalData.duration * unitPrice
-        setInitialData({ ...initalData, unit_price: unitPrice, totalPrice: totalPrice })
+        setInitialData({ ...initalData, unitPrice: unitPrice, totalPrice: totalPrice })
     }
 
     const fetchData = async () => {
