@@ -100,7 +100,7 @@ function CategoryDetail({ different }) {
                 {value.url !== '' ? (
                     <div className='flex flex-col justify-center items-center gap-[5px]'>
                         <img src={value.url} alt="preview" className="w-full h-[100px] object-cover" />
-                        <DeleteFilled className='text-[red]' onClick={removeImg} />
+                        {different.type !== 'view' && value.url && <DeleteFilled className='text-[red]' onClick={removeImg} />}
                     </div>
                 ) : (
                     <>

@@ -69,9 +69,19 @@ const router = createBrowserRouter([
                 element: <SongList />
             },
             {
+                path: '/song/:id',
+                element: <SongDetail
+                    different={{ type: 'view' }} />
+            },
+            {
                 path: '/song/add',
                 element: <SongDetail
                     different={{ type: 'add' }} />
+            },
+            {
+                path: '/song/edit/:id',
+                element: <SongDetail
+                    different={{ type: 'edit' }} />
             },
 
             {
