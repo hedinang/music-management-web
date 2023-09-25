@@ -10,7 +10,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import apiFactory from '../../api';
 import { Option } from "antd/es/mentions";
 import { NumericFormat } from 'react-number-format';
-import { formatTime } from '../../utils/formatTime';
 import { toast } from 'react-toastify';
 
 
@@ -56,11 +55,7 @@ function SongDetail({ different }) {
         duration: 0
 
     })
-    const [categoryList, setCategoryList] = useState([])
-    const chooseCategory = (e) => {
-        const u = categoryList.find(f => f.value === e)
-        // setChoosedUser(u?.value)
-    }
+
     const onFinish = async (values) => {
         let result
         // if (different.type === 'edit') {
@@ -73,15 +68,16 @@ function SongDetail({ different }) {
 
         // }
         if (different.type === 'add') {
-            result = await apiFactory.songApi.create({
-                name: values?.name,
-                author: values?.author,
-                category: values?.category.map(e => e.value),
-                img: values?.img.file,
-                audio: values?.song.file,
-                duration: initalData.duration,
-                unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
-            })
+            // result = await apiFactory.songApi.create({
+            //     name: values?.name,
+            //     author: values?.author,
+            //     category: values?.category.map(e => e.value),
+            //     img: values?.img.file,
+            //     audio: values?.song.file,
+            //     duration: initalData.duration,
+            //     unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
+            // })
+            console.log('aaa')
         }
 
         if (result?.status === 200) {
@@ -93,7 +89,7 @@ function SongDetail({ different }) {
                 toast.success('Cập nhật danh mục nhạc thành công')
             }
 
-            navigate('/category/list')
+            navigate('/song/list')
         } else {
             toast.error(result?.message)
         }
@@ -219,48 +215,51 @@ function SongDetail({ different }) {
     }
 
     const fetchData = async () => {
-        const result = await apiFactory.songApi.getById(param.id)
-        if (result.data) {
-            setInitialData({
-                name: result.data.name,
-                author: result.data.author,
-                category: result?.data?.category?.map(e => ({
-                    value: e.id,
-                    label: e.name
-                })),
-                img: {
-                    url: result.data.img_url,
-                    file: null
-                },
-                song: {
-                    url: result.data.audio_url,
-                    file: null
-                },
-                unit_price: result.data.unit_price,
-                totalPrice: result.data.duration * result.data.unit_price,
-                duration: result.data.duration
-            })
+        if (param.id) {
+            const result = await apiFactory.songApi.getById(param.id)
+            if (result.data) {
+                setInitialData({
+                    name: result.data.name,
+                    author: result.data.author,
+                    category: result?.data?.category?.map(e => ({
+                        value: e.id,
+                        label: e.name
+                    })),
+                    img: {
+                        url: result.data.img_url,
+                        file: null
+                    },
+                    song: {
+                        url: result.data.audio_url,
+                        file: null
+                    },
+                    unit_price: result.data.unit_price,
+                    totalPrice: result.data.duration * result.data.unit_price,
+                    duration: result.data.duration
+                })
 
-            form.setFieldsValue({
-                name: result.data.name,
-                author: result.data.author,
-                category: result?.data?.category?.map(e => ({
-                    value: e.id,
-                    label: e.name
-                })),
-                img: {
-                    url: result.data.img_url,
-                    file: null
-                },
-                song: {
-                    url: result.data.audio_url,
-                    file: null
-                },
-                unitPrice: result.data.unit_price,
-                totalPrice: result.data.duration * result.data.unit_price,
-                duration: result.data.duration
-            })
+                form.setFieldsValue({
+                    name: result.data.name,
+                    author: result.data.author,
+                    category: result?.data?.category?.map(e => ({
+                        value: e.id,
+                        label: e.name
+                    })),
+                    img: {
+                        url: result.data.img_url,
+                        file: null
+                    },
+                    song: {
+                        url: result.data.audio_url,
+                        file: null
+                    },
+                    unitPrice: result.data.unit_price,
+                    totalPrice: result.data.duration * result.data.unit_price,
+                    duration: result.data.duration
+                })
+            }
         }
+
     }
 
     const AsyncSelect = ({ value, onChange }) => {
@@ -314,18 +313,18 @@ function SongDetail({ different }) {
             }
         }
 
-        const removeItem = (e) => {
+        const removeItem = (event, e) => {
+            event.preventDefault();
             const index = value.findIndex((f) => f.value === e)
-            // value.splice(index, 1)
+            value.splice(index, 1)
             const clonePatientList = categoryList.map((f) => {
                 if (f.value === e) {
                     f.disabled = false
                 }
                 return f
-            }
-            )
+            })
             setCategoryList(clonePatientList)
-            // onChange([...value]);
+            onChange(value);
         }
         const onscroll = async (event) => {
             if ((event.currentTarget.scrollTop + event.currentTarget.clientHeight) >= event.currentTarget.scrollHeight &&
@@ -377,6 +376,7 @@ function SongDetail({ different }) {
                     setCategoryList(cloneCategoryList)
                     onChange([...value]);
                 }}
+                value=''
             >
                 {categoryList.filter(e => e.disabled === false).map(e => e.component)}
             </Select>
@@ -384,8 +384,8 @@ function SongDetail({ different }) {
                 {value?.map((e) => {
                     return <Tag
                         color={'blue'}
-                        closable={true}
-                        onClose={() => removeItem(e.value)}
+                        closable
+                        onClose={(event) => removeItem(event, e.value)}
                         // style={{ marginRight: 3 }}
                         className='h-[30px] text-[15px] mt-[5px]'
                     >
@@ -448,19 +448,7 @@ function SongDetail({ different }) {
 
                     <Row>
                         <Col span={11}>
-                            <Form.Item label="Giá / 1 phút (VNĐ)"
-                                name="unitPrice"
-                            // rules={[
-                            //     ({ getFieldValue }) => ({
-                            //         validator(rule, value) {
-                            //             if (value !== '' && value.trim() === '') {
-                            //                 return Promise.reject('この項目は必須です')
-                            //             }
-                            //             return Promise.resolve()
-                            //         }
-                            //     })
-                            // ]}
-                            >
+                            <Form.Item label="Giá / 1 phút (VNĐ)" name="unitPrice">
                                 <NumericFormat
                                     onKeyPress={(event) => {
                                         if (!/[0-9.]/.test(event.key)) {
