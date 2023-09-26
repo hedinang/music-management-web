@@ -57,7 +57,7 @@ const columns = [
         ],
     },
     {
-        title: 'Tên sản phẩm',
+        title: 'Tên bài hát',
         dataIndex: 'name',
         key: 'name',
         children: [

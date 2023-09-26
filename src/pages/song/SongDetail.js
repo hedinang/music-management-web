@@ -72,8 +72,8 @@ function SongDetail({ different }) {
                 name: values?.name,
                 author: values?.author,
                 category: values?.category.map(e => e.value),
-                img: values?.img.file,
-                audio: values?.song.file,
+                image: values?.img.file,
+                url: values?.song.file,
                 duration: initalData.duration,
                 unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
             })
@@ -225,11 +225,11 @@ function SongDetail({ different }) {
                         label: e.name
                     })),
                     img: {
-                        url: result.data.img_url,
+                        url: result.data.image,
                         file: null
                     },
                     song: {
-                        url: result.data.audio_url,
+                        url: result.data.url,
                         file: null
                     },
                     unit_price: result.data.unit_price,
@@ -245,11 +245,11 @@ function SongDetail({ different }) {
                         label: e.name
                     })),
                     img: {
-                        url: result.data.img_url,
+                        url: result.data.image,
                         file: null
                     },
                     song: {
-                        url: result.data.audio_url,
+                        url: result.data.url,
                         file: null
                     },
                     unitPrice: result.data.unit_price,
@@ -375,6 +375,7 @@ function SongDetail({ different }) {
                     setCategoryList(cloneCategoryList)
                     onChange([...value]);
                 }}
+                disabled={different.type === 'view'}
                 value=''
             >
                 {categoryList.filter(e => e.disabled === false).map(e => e.component)}
@@ -383,7 +384,7 @@ function SongDetail({ different }) {
                 {value?.map((e) => {
                     return <Tag
                         color={'blue'}
-                        closable
+                        closable={different.type !== 'view'}
                         onClose={(event) => removeItem(event, e.value)}
                         // style={{ marginRight: 3 }}
                         className='h-[30px] text-[15px] mt-[5px]'
