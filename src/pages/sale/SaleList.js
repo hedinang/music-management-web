@@ -9,6 +9,7 @@ import { FiRefreshCcw } from 'react-icons/fi';
 import { DeleteOutlined, FileAddOutlined, SearchOutlined } from '@ant-design/icons';
 import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
+import apiFactory from '../../api';
 
 const dataSource = [
     {
@@ -35,8 +36,8 @@ const dataSource = [
 const columns = [
     {
         title: 'STT',
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'index',
+        key: 'index',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -50,16 +51,16 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'id',
-                render: (value, record) => <div className='text-center'>{record.id}</div>,
+                dataIndex: 'index',
+                render: (value, record) => <div className='text-center'>{record.index}</div>,
                 width: '20px'
             },
         ],
     },
     {
         title: 'Tên bài hát',
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'songName',
+        key: 'songName',
         children: [
             {
                 title: (
@@ -72,8 +73,33 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'name',
-                render: (value, record) => record.name,
+                dataIndex: 'songName',
+                render: (value, record) => {
+                    return record.song.name
+                },
+                width: '70px'
+
+            },
+        ],
+    },
+    {
+        title: 'Tác giả',
+        dataIndex: 'author',
+        key: 'author',
+        children: [
+            {
+                title: (
+                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                        <Input
+                            className="column-input-search"
+                            placeholder={'Tìm kiếm'}
+                        // value={querySearch.member_code}
+                        // onChange={(e) => onSearch('member_code', e.target.value)}
+                        />
+                    </div>
+                ),
+                dataIndex: 'author',
+                render: (value, record) => record.song.author,
                 width: '70px'
 
             },
@@ -81,8 +107,8 @@ const columns = [
     },
     {
         title: 'Người mua',
-        dataIndex: 'user',
-        key: 'user',
+        dataIndex: 'customerName',
+        key: 'customerName',
         children: [
             {
                 title: (
@@ -95,8 +121,8 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'user',
-                render: (value, record) => record.user,
+                dataIndex: 'customerName',
+                render: (value, record) => record.customer.name,
                 width: '70px'
 
             },
@@ -104,8 +130,8 @@ const columns = [
     },
     {
         title: 'Thành tiền',
-        dataIndex: 'cost',
-        key: 'cost',
+        dataIndex: 'songTotalPrice',
+        key: 'songTotalPrice',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -119,16 +145,16 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'cost',
-                render: (value, record) => record.cost,
+                dataIndex: 'songTotalPrice',
+                render: (value, record) => record.song.unit_price * record.song.duration,
                 width: '50px'
             },
         ],
     },
     {
         title: 'Ngày mua',
-        dataIndex: 'createdTime',
-        key: 'createdTime',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
         // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
         children: [
             {
@@ -142,8 +168,8 @@ const columns = [
                         />
                     </div>
                 ),
-                dataIndex: 'createdTime',
-                render: (value, record) => <div className='text-center'>{record.createdTime}</div>,
+                dataIndex: 'createdAt',
+                render: (value, record) => <div className='text-center'>{formatTime(record.created_at)}</div>,
                 width: '40px'
             },
         ],
@@ -176,7 +202,7 @@ const columns = [
 function SaleList() {
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
     const [copyId, setCopyId] = useState(-1);
 
@@ -184,6 +210,7 @@ function SaleList() {
     const [selectedRow, setSelectedRow] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [disableDelete, setDisableDelete] = useState(true);
+    const [saleList, setSaleList] = useState([]);
 
     const rowSelection = {
         columnWidth: '10px',
@@ -205,8 +232,25 @@ function SaleList() {
         },
         preserveSelectedRowKeys: true,
     };
-    useEffect(() => {
 
+    const fetchData = async () => {
+        const result = await apiFactory.saleApi.getList({
+            limit: limit,
+            page: page
+        })
+
+        setSaleList(result?.data?.items?.map((e, i) => (
+            {
+                index: (page - 1) * limit + i + 1,
+                ...e
+            }
+        )))
+
+        setTotalItems(result?.data?.total_items)
+    }
+
+    useEffect(() => {
+        fetchData()
     }, [])
 
     return <div className='category-list'>
@@ -215,7 +259,7 @@ function SaleList() {
             <div className='button-header'>
                 <Button shape="round"
                     type="primary"
-                    onClick={() => navigate('/product/add')}
+                    onClick={() => navigate('/sale/add')}
                     className='bg-[#007dce] text-[white] flex items-center'
                 >
                     <FileAddOutlined className="mr-1" />  Thêm
@@ -257,7 +301,7 @@ function SaleList() {
                 </Button>
             </div>
             <Table
-                dataSource={dataSource}
+                dataSource={saleList}
                 columns={columns}
                 pagination={{
                     defaultPageSize: 10,
