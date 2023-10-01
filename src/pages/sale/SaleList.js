@@ -242,11 +242,16 @@ function SaleList() {
         setSaleList(result?.data?.items?.map((e, i) => (
             {
                 index: (page - 1) * limit + i + 1,
-                ...e
+                ...e,
+                key: e.id
             }
         )))
 
         setTotalItems(result?.data?.total_items)
+    }
+
+    const onCopy = () => {
+        console.log("first")
     }
 
     useEffect(() => {
@@ -265,7 +270,7 @@ function SaleList() {
                     <FileAddOutlined className="mr-1" />  Thêm
                 </Button>
                 <Button className="bg-[#007dce] text-[white] flex items-center" shape="round" type="primary"
-                // disabled={disableCopy} onClick={onCopy}
+                    disabled={disableCopy} onClick={onCopy}
                 >
                     <AiFillCopy className="mr-1" /> Copy
                 </Button>
@@ -275,7 +280,7 @@ function SaleList() {
                     type="primary"
                     danger
                     icon={<DeleteOutlined className="mr-1" />}
-                // disabled={disableDelete}
+                    disabled={disableDelete}
                 // onClick={onDeleteModal}
                 >
                     Xoá
