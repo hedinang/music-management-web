@@ -188,8 +188,9 @@ function CustomerList() {
 
     const fetchData = async () => {
         const result = await apiFactory.customerApi.getList({ limit, page })
-        setCustomerList(result?.data?.map((e, i) => (
+        setCustomerList(result?.data?.items?.map((e, i) => (
             {
+                key: e?.id,
                 index: (page - 1) * limit + i + 1,
                 username: e?.username,
                 createdAt: formatTime(e?.createdAt),
