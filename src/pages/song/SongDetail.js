@@ -12,10 +12,6 @@ import { Option } from "antd/es/mentions";
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
 
-
-
-
-
 async function getDuration(file) {
     const url = URL.createObjectURL(file);
 
@@ -32,8 +28,6 @@ async function getDuration(file) {
     });
 }
 
-
-
 function SongDetail({ different }) {
     const param = useParams()
     const navigate = useNavigate()
@@ -46,7 +40,11 @@ function SongDetail({ different }) {
             url: '',
             file: null
         },
-        song: {
+        short_song: {
+            url: '',
+            file: null
+        },
+        full_song: {
             url: '',
             file: null
         },
@@ -73,7 +71,8 @@ function SongDetail({ different }) {
                 author: values?.author,
                 category: values?.category.map(e => e.value),
                 image: values?.img.file,
-                url: values?.song.file,
+                short_url: values?.short_song.file,
+                full_url: values?.full_song.file,
                 duration: initalData.duration,
                 unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
             })
@@ -93,7 +92,6 @@ function SongDetail({ different }) {
             toast.error(result?.message)
         }
     }
-
 
     const CoverImage = useCallback(({ value, onChange }) => {
         const uploadImg = (e) => {
@@ -156,15 +154,17 @@ function SongDetail({ different }) {
         </label>
     }, [])
 
-    const FileMusic = useCallback(({ value, onChange }) => {
+    const FileMusic = ({ kind, value, onChange }) => {
         const uploadMusic = async (e) => {
             const file = e.target.files[0];
-            const duration = await getDuration(file)
-            let totalPrice = 0
-            if (initalData?.unitPrice) {
-                totalPrice = Math.round(duration / 60) * initalData?.unitPrice
+            if (kind === 'full') {
+                const duration = await getDuration(file)
+                let totalPrice = 0
+                if (initalData?.unitPrice) {
+                    totalPrice = Math.round(duration / 60) * initalData?.unitPrice
+                }
+                setInitialData({ ...initalData, duration: Math.round(duration / 60), totalPrice: totalPrice })
             }
-            setInitialData({ ...initalData, duration: Math.round(duration / 60), totalPrice: totalPrice })
             const reader = new FileReader();
             if (file) {
                 reader.readAsDataURL(file);
@@ -184,6 +184,9 @@ function SongDetail({ different }) {
 
         const removeImg = (e) => {
             e.preventDefault()
+            if (kind === 'full') {
+                setInitialData({ ...initalData, duration: 0, totalPrice: 0 })
+            }
             onChange({
                 file: null,
                 url: ''
@@ -192,10 +195,10 @@ function SongDetail({ different }) {
 
         return <div className='flex flex-row items-center gap-[10px]'>
             <label
-                htmlFor="music"
+                htmlFor={kind}
                 className="w-[100px] h-[100px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
                 style={{ border: '1px solid #5A96D7' }}>
-                <input type="file" id="music" className="hidden" style={{ display: 'none' }}
+                <input type="file" id={kind} className="hidden" style={{ display: 'none' }}
                     accept="audio/*, video/*" onChange={uploadMusic} disabled={different.type === 'view'} />
                 <div className="flex flex-row items-center justify-center gap-[5px]">
                     <div className='text-[30px]'>+</div>
@@ -205,7 +208,7 @@ function SongDetail({ different }) {
             {value.url && <audio controls={true} src={value.url} />}
             {different.type !== 'view' && value.url && <DeleteFilled className='text-[red]' onClick={removeImg} />}
         </div>
-    }, [initalData])
+    }
 
     const onChangeUnitPrice = (e) => {
         const unitPrice = Number(e.target.value.replaceAll(',', ''))
@@ -228,8 +231,12 @@ function SongDetail({ different }) {
                         url: result.data.image,
                         file: null
                     },
-                    song: {
-                        url: result.data.url,
+                    short_song: {
+                        url: result.data.short_url,
+                        file: null
+                    },
+                    full_song: {
+                        url: result.data.full_url,
                         file: null
                     },
                     unit_price: result.data.unit_price,
@@ -248,8 +255,12 @@ function SongDetail({ different }) {
                         url: result.data.image,
                         file: null
                     },
-                    song: {
-                        url: result.data.url,
+                    short_song: {
+                        url: result.data.short_url,
+                        file: null
+                    },
+                    full_song: {
+                        url: result.data.full_url,
                         file: null
                     },
                     unitPrice: result.data.unit_price,
@@ -258,7 +269,6 @@ function SongDetail({ different }) {
                 })
             }
         }
-
     }
 
     const AsyncSelect = ({ value, onChange }) => {
@@ -491,12 +501,21 @@ function SongDetail({ different }) {
                     </Form.Item>
 
                     <Form.Item
-                        label="File nhạc"
-                        name="song"
+                        label="File nhạc trích đoạn"
+                        name="short_song"
                         className="mb-[8px]"
                         required={true}
                     >
-                        <FileMusic />
+                        <FileMusic kind={'short'} />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="File nhạc gốc"
+                        name="full_song"
+                        className="mb-[8px]"
+                        required={true}
+                    >
+                        <FileMusic kind={'full'} />
                     </Form.Item>
                 </Col>
 

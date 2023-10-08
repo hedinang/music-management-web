@@ -1,4 +1,5 @@
 import AuthApi from "./authApi";
+import AuthorApi from "./authorApi";
 import CategoryApi from "./categoryApi";
 import CustomerApi from "./customerApi";
 import SaleApi from "./saleApi";
@@ -11,7 +12,8 @@ const apiFactory = {
     categoryApi: new CategoryApi(),
     customerApi: new CustomerApi(),
     songApi: new SongApi(),
-    saleApi: new SaleApi()
+    saleApi: new SaleApi(),
+    authorApi: new AuthorApi()
 };
 
 export default apiFactory;

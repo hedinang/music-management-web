@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Input, Pagination, Select, Table, Tag } from 'antd';
+import { Button, Input, Pagination, Select, Table } from 'antd';
 import { AiFillCopy } from 'react-icons/ai';
 import { FiRefreshCcw } from 'react-icons/fi';
 
@@ -10,25 +10,6 @@ import { DeleteOutlined, FileAddOutlined, SearchOutlined } from '@ant-design/ico
 import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
-
-const dataSource = [
-    {
-        key: 1,
-        id: 1,
-        name: 'Khúc hát tuổi thơ',
-        duration: 10,
-        author: 'Sơn Tùng',
-        createdTime: formatTime(new Date())
-    },
-    {
-        key: 2,
-        id: 2,
-        name: 'Quên anh đi',
-        duration: 10,
-        author: 'Sơn Tùng',
-        createdTime: formatTime(new Date())
-    },
-];
 
 const columns = [
     {
@@ -55,7 +36,7 @@ const columns = [
         ],
     },
     {
-        title: 'Tên bài hát',
+        title: 'Tên',
         dataIndex: 'name',
         key: 'name',
         children: [
@@ -72,132 +53,8 @@ const columns = [
                 ),
                 dataIndex: 'name',
                 render: (value, record) => record.name,
-                width: 400
+                width: 500
 
-            },
-        ],
-    },
-    {
-        title: 'Danh mục',
-        dataIndex: 'category',
-        key: 'category',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'category',
-                render: (value, record) => record?.category?.map(e => (<Tag
-                    color={'blue'}
-                    closable={false}
-                    className='text-[15px]'
-                >
-                    {e}
-                </Tag>)),
-                width: 300
-            },
-        ],
-    },
-
-    {
-        title: 'Độ dài bài hát (Phút)',
-        dataIndex: 'duration',
-        key: 'duration',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'duration',
-                render: (value, record) => record.duration,
-                width: 150
-            },
-        ],
-    },
-
-
-    {
-        title: 'Tác giả',
-        dataIndex: 'author',
-        key: 'author',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'author',
-                render: (value, record) => record.author,
-                width: 150
-            },
-        ],
-    },
-    {
-        title: 'Giá / 1 phút (VNĐ)',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'unitPrice',
-                render: (value, record) => record.unitPrice,
-                width: 150
-            },
-        ],
-    },
-    {
-        title: 'Giá cả bài (VNĐ)',
-        dataIndex: 'totalPrice',
-        key: 'totalPrice',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'totalPrice',
-                render: (value, record) => record.totalPrice,
-                width: 150
             },
         ],
     },
@@ -219,13 +76,14 @@ const columns = [
                 ),
                 dataIndex: 'createdAt',
                 render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: 300
+                width: 500
             },
         ],
     },
 
 ];
-function SongList() {
+function AuthorList() {
+    const [authorList, setauthorList] = useState([])
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
     const [page, setPage] = useState(1)
@@ -236,7 +94,6 @@ function SongList() {
     const [selectedRow, setSelectedRow] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [disableDelete, setDisableDelete] = useState(true);
-    const [songList, setSongList] = useState([])
 
     const rowSelection = {
         columnWidth: 15,
@@ -260,43 +117,37 @@ function SongList() {
     };
 
     const fetchData = async () => {
-        const result = await apiFactory.songApi.getList({
+        const result = await apiFactory.authorApi.getList({
             limit: limit,
             page: page
         })
 
-        setSongList(result?.data?.items?.map((e, i) => (
+        setauthorList(result?.data?.items?.map((e, i) => (
             {
                 id: e?.id,
                 index: (page - 1) * limit + i + 1,
                 name: e?.name,
-                category: e?.category?.map(f => f.name),
-                duration: e?.duration,
-                author: e?.author,
-                unitPrice: e?.unit_price,
-                totalPrice: e?.unit_price * e?.duration,
-                createdAt: formatTime(e?.created_at),
+                createdAt: formatTime(e?.createdAt),
             }
         )))
-
+        
         setTotalItems(result?.data?.total_items)
     }
 
     const onDoubleClick = (record) => {
-        navigate(`/song/${record.id}`);
+        navigate(`/author/${record.id}`);
     };
 
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [limit, page])
 
-    return <div className='category-list'>
-
+    return <div className='author-list'>
         <div>
             <div className='button-header'>
                 <Button shape="round"
                     type="primary"
-                    onClick={() => navigate('/song/add')}
+                    onClick={() => navigate('/author/add')}
                     className='bg-[#007dce] text-[white] flex items-center'
                 >
                     <FileAddOutlined className="mr-1" />  Thêm
@@ -338,7 +189,7 @@ function SongList() {
                 </Button>
             </div>
             <Table
-                dataSource={songList}
+                dataSource={authorList}
                 columns={columns}
                 pagination={{
                     defaultPageSize: 10,
@@ -389,4 +240,4 @@ function SongList() {
 
 }
 
-export default SongList
+export default AuthorList

@@ -53,7 +53,7 @@ const SideBar = () => {
         getItem(<Link to={'/'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
         // getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
         getItem(<Link to={'/song/list'}>{'Danh sách nhạc'}</Link>, '1', <FaMusic />),
-        getItem(<Link to={'/song/list'}>{'Danh sách tác giả'}</Link>, '1', <UserOutlined />),
+        getItem(<Link to={'/author/list'}>{'Danh sách tác giả'}</Link>, '1', <UserOutlined />),
         getItem(<Link to={'/sale/list'}>{'Danh sách đã bán'}</Link>, '1', <BsFillCartFill />),
         getItem(<Link to={'/category/list'}>{'Danh mục'}</Link>, '1', <UnorderedListOutlined />),
         getItem(<Link to={'/'}>{'Mã quà tặng'}</Link>, '1', <GiftOutlined />)

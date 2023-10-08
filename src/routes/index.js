@@ -15,6 +15,8 @@ import SaleDetail from '../pages/sale/SaleDetail';
 import SaleList from '../pages/sale/SaleList';
 import CustomerList from '../pages/customer/CustomerList';
 import CustomerDetail from '../pages/customer/CustomerDetail';
+import AuthorList from '../pages/author/authorList';
+import AuthorDetail from '../pages/author/authorDetail';
 // import CategoryEdit from '../components/category';
 // import Category from '../components/category';
 
@@ -123,6 +125,21 @@ const router = createBrowserRouter([
                 element: <CustomerDetail
                     different={{ type: 'add' }} />
             },
+
+            {
+                path: '/author/list',
+                element: <AuthorList />
+            },
+            {
+                path: '/author/add',
+                element: <AuthorDetail
+                    different={{ type: 'add' }} />
+            },
+            {
+                path: '/author/:id',
+                element: <AuthorDetail
+                    different={{ type: 'view' }} />
+            }
         ]
     },
 
