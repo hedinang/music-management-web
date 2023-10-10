@@ -56,23 +56,31 @@ function SongDetail({ different }) {
 
     const onFinish = async (values) => {
         let result
-        // if (different.type === 'edit') {
-        //     result = await apiFactory.songApi.update({
-        //         id: param.id,
-        //         name: values?.musicType.trim(),
-        //         file: values?.img?.file,
-        //         origin_url: values?.img?.url
-        //     })
+        if (different.type === 'edit') {
+            result = await apiFactory.songApi.update({
+                id: param?.id,
+                name: values?.name,
+                author: values?.author,
+                category: values?.category?.map(e => e.value),
+                image: values?.img?.file,
+                image_url: values?.img?.url,
+                short_audio: values?.short_song?.file,
+                short_audio_url: values?.short_song?.url,
+                full_audio: values?.full_song?.file,
+                full_audio_url: values?.full_song?.url,
+                duration: initalData.duration,
+                unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
+            })
+        }
 
-        // }
         if (different.type === 'add') {
             result = await apiFactory.songApi.create({
                 name: values?.name,
                 author: values?.author,
                 category: values?.category.map(e => e.value),
                 image: values?.img.file,
-                short_url: values?.short_song.file,
-                full_url: values?.full_song.file,
+                short_audio: values?.short_song.file,
+                full_audio: values?.full_song.file,
                 duration: initalData.duration,
                 unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
             })
@@ -232,11 +240,11 @@ function SongDetail({ different }) {
                         file: null
                     },
                     short_song: {
-                        url: result.data.short_url,
+                        url: result.data.short_audio,
                         file: null
                     },
                     full_song: {
-                        url: result.data.full_url,
+                        url: result.data.full_audio,
                         file: null
                     },
                     unit_price: result.data.unit_price,
@@ -256,11 +264,11 @@ function SongDetail({ different }) {
                         file: null
                     },
                     short_song: {
-                        url: result.data.short_url,
+                        url: result.data.short_audio,
                         file: null
                     },
                     full_song: {
-                        url: result.data.full_url,
+                        url: result.data.full_audio,
                         file: null
                     },
                     unitPrice: result.data.unit_price,
@@ -527,7 +535,7 @@ function SongDetail({ different }) {
                     <Button className='bg-[#868e96] text-white ml-[230px]' onClick={() => navigate('/song/list')}>Quay lại</Button>
                     <div className='flex gap-[5px]'>
                         {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white' htmlType="submit">Lưu</Button>}
-                        {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white'>Sửa</Button>}
+                        {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white' onClick={() => navigate(`/song/edit/${param.id}`)}>Sửa</Button>}
                         {different.type === 'view' && <Button className='bg-[#ed2727] text-white'>Xoá</Button>}
                     </div>
                 </div>

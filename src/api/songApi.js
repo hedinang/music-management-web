@@ -4,20 +4,21 @@ import BaseApi from './baseApi';
 
 class SongApi extends BaseApi {
     getList(param) {
-        return this.post(`${SONG}/list`, param);
+        return this.post(`${SONG}/admin/list`, param);
     }
     getById(id) {
         if (id) {
-            return this.get(`${SONG}/${id}`);
+            return this.get(`${SONG}/admin/${id}`);
         }
         return Promise.resolve(null);
     }
-    // updateRecord(
-    //     id: string,
-    //     data: bodyRequestCreateDatabase,
-    // ): Promise<DatabasesData> {
-    //     return this.put<DatabasesData>(`${DBS}/${id}`, data);
-    // }
+    update(param) {
+        return this.put(`${SONG}/update`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+    }
     create(param) {
         return this.post(`${SONG}/add`, param, {
             headers: {
