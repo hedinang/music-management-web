@@ -26,8 +26,8 @@ class SongApi extends BaseApi {
             }
         });
     }
-    // deleteRecord(id: string): Promise<DatabasesData> {
-    //     return this.deleteMany<DatabasesData>(DBS, { id: [id] });
-    // }
+    delete(idList){
+        return this.post(`${SONG}/delete`, idList);
+    }
 }
 export default SongApi;

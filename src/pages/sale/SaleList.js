@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Input, Modal, Pagination, Select, Table } from 'antd';
+import { Button, Input, Modal, Pagination, Select, Spin, Table } from 'antd';
 import { AiFillCopy } from 'react-icons/ai';
 import { FiRefreshCcw } from 'react-icons/fi';
 
@@ -191,6 +191,8 @@ function SaleList() {
     const [disableDelete, setDisableDelete] = useState(true);
     const [saleList, setSaleList] = useState([]);
     const [deleteModal, setDeleteModal] = useState(false)
+    const [loading, setLoading] = useState(false)
+
 
     const rowSelection = {
         columnWidth: '10px',
@@ -235,7 +237,9 @@ function SaleList() {
     }
 
     const onDelete = async () => {
+        setLoading(true)
         const result = await apiFactory.saleApi.delete(selectedRowKeys)
+        setLoading(false)
         if (result.status === 200) {
             toast.success('Xoá thành công')
             setDeleteModal(false)
@@ -344,10 +348,12 @@ function SaleList() {
         </div>
         <Modal open={deleteModal} closable={false} footer={null}>
             <p>Bạn có chắc chắn muốn xoá không?</p>
-            <div className='mt-[20px] flex justify-center gap-[10px]'>
-                <Button className='bg-[#24dc22] text-white' onClick={() => setDeleteModal(false)}>Huỷ</Button>
-                <Button className='bg-[#ff4d4f] text-white' onClick={onDelete}>Xoá</Button>
-            </div>
+            {loading ? <Spin className="mt-[20px] flex justify-center gap-[10px]" /> :
+                <div className='mt-[20px] flex justify-center gap-[10px]'>
+                    <Button className='bg-[#24dc22] text-white' onClick={() => setDeleteModal(false)}>Huỷ</Button>
+                    <Button className='bg-[#ff4d4f] text-white' onClick={onDelete}>Xoá</Button>
+                </div>
+            }
         </Modal>
     </div>
 

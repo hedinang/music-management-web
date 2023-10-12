@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Input, Pagination, Select, Table, Tag } from 'antd';
+import { Button, Input, Modal, Pagination, Select, Spin, Table, Tag } from 'antd';
 import { AiFillCopy } from 'react-icons/ai';
 import { FiRefreshCcw } from 'react-icons/fi';
 
@@ -10,25 +10,7 @@ import { DeleteOutlined, FileAddOutlined, SearchOutlined } from '@ant-design/ico
 import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
-
-const dataSource = [
-    {
-        key: 1,
-        id: 1,
-        name: 'Khúc hát tuổi thơ',
-        duration: 10,
-        author: 'Sơn Tùng',
-        createdTime: formatTime(new Date())
-    },
-    {
-        key: 2,
-        id: 2,
-        name: 'Quên anh đi',
-        duration: 10,
-        author: 'Sơn Tùng',
-        createdTime: formatTime(new Date())
-    },
-];
+import { toast } from 'react-toastify';
 
 const columns = [
     {
@@ -236,7 +218,9 @@ function SongList() {
     const [selectedRow, setSelectedRow] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [disableDelete, setDisableDelete] = useState(true);
+    const [deleteModal, setDeleteModal] = useState(false)
     const [songList, setSongList] = useState([])
+    const [loading, setLoading] = useState(false)
 
     const rowSelection = {
         columnWidth: 15,
@@ -267,6 +251,7 @@ function SongList() {
 
         setSongList(result?.data?.items?.map((e, i) => (
             {
+                key: e?.id,
                 id: e?.id,
                 index: (page - 1) * limit + i + 1,
                 name: e?.name,
@@ -286,105 +271,124 @@ function SongList() {
         navigate(`/song/${record.id}`);
     };
 
+    const onDelete = async () => {
+        setLoading(true)
+        const result = await apiFactory.songApi.delete(selectedRowKeys)
+        setLoading(false)
+        if (result.status === 200) {
+            toast.success('Xoá thành công')
+            setDeleteModal(false)
+            fetchData()
+        } else {
+            toast.error(result?.message)
+        }
+    }
+
     useEffect(() => {
         fetchData()
     }, [])
 
     return <div className='category-list'>
+        <div className='button-header'>
+            <Button shape="round"
+                type="primary"
+                onClick={() => navigate('/song/add')}
+                className='bg-[#007dce] text-[white] flex items-center'
+            >
+                <FileAddOutlined className="mr-1" />  Thêm
+            </Button>
+            <Button className="bg-[#007dce] text-[white] flex items-center" shape="round" type="primary"
+                disabled={disableCopy}
+            // onClick={onCopy}
+            >
+                <AiFillCopy className="mr-1" /> Copy
+            </Button>
+            <Button
+                className="flex items-center"
+                shape="round"
+                type="primary"
+                danger
+                icon={<DeleteOutlined className="mr-1" />}
+                disabled={disableDelete}
+                onClick={() => setDeleteModal(true)}
+            >
+                Xoá
+            </Button>
 
-        <div>
-            <div className='button-header'>
-                <Button shape="round"
-                    type="primary"
-                    onClick={() => navigate('/song/add')}
-                    className='bg-[#007dce] text-[white] flex items-center'
-                >
-                    <FileAddOutlined className="mr-1" />  Thêm
-                </Button>
-                <Button className="bg-[#007dce] text-[white] flex items-center" shape="round" type="primary"
-                // disabled={disableCopy} onClick={onCopy}
-                >
-                    <AiFillCopy className="mr-1" /> Copy
-                </Button>
-                <Button
-                    className="flex items-center"
-                    shape="round"
-                    type="primary"
-                    danger
-                    icon={<DeleteOutlined className="mr-1" />}
-                // disabled={disableDelete}
-                // onClick={onDeleteModal}
-                >
-                    Xoá
-                </Button>
-
-                <Button
-                    className='ml-[auto] flex items-center bg-[#007dce] text-[white]'
-                    shape="round"
-                    type="primary"
-                // icon={<SearchIcon className="mr-2" />}
-                // onClick={onClear}
-                >
-                    <FiRefreshCcw className="mr-2" /> Làm mới
-                </Button>
-                <Button
-                    className='bg-[#007dce] text-[white] flex items-center'
-                    shape="round"
-                    type="primary"
-                    icon={<SearchOutlined className="mr-1" />}
-                // onClick={handleSearch}
-                >
-                    Tìm kiếm
-                </Button>
-            </div>
-            <Table
-                dataSource={songList}
-                columns={columns}
-                pagination={{
-                    defaultPageSize: 10,
-                    pageSizeOptions: [5, 10],
-                    pageSize: limit,
-                    position: ['bottomCenter'],
-                    style: { display: 'none' },
-                }}
-                // scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
-                onRow={(record) => ({
-                    onDoubleClick: () => {
-                        onDoubleClick(record);
-                    },
-                })}
-                // rowSelection={column.length > 0 ? { ...rowSelection } : null}
-                showSorterTooltip={false}
-                bordered
-                rowSelection={columns.length > 0 ? { ...rowSelection } : null}
-
-            />
-            <div className="flex items-center justify-end wrapper-pagination mt-5">
-                <Select
-                    defaultValue={limit}
-                    value={limit}
-                    // onChange={handleChangePagePerSizes}
-                    options={[
-                        {
-                            value: 10,
-                            label: '10',
-                        },
-                        {
-                            value: 20,
-                            label: '20',
-                        },
-                        {
-                            value: 30,
-                            label: '30',
-                        },
-                    ]}
-                />
-                <Pagination current={page} showSizeChanger={false} pageSize={limit}
-                    //  onChange={handleChangePage} 
-                    total={totalItems} />
-            </div>
+            <Button
+                className='ml-[auto] flex items-center bg-[#007dce] text-[white]'
+                shape="round"
+                type="primary"
+            // icon={<SearchIcon className="mr-2" />}
+            // onClick={onClear}
+            >
+                <FiRefreshCcw className="mr-2" /> Làm mới
+            </Button>
+            <Button
+                className='bg-[#007dce] text-[white] flex items-center'
+                shape="round"
+                type="primary"
+                icon={<SearchOutlined className="mr-1" />}
+            // onClick={handleSearch}
+            >
+                Tìm kiếm
+            </Button>
         </div>
+        <Table
+            dataSource={songList}
+            columns={columns}
+            pagination={{
+                defaultPageSize: 10,
+                pageSizeOptions: [5, 10],
+                pageSize: limit,
+                position: ['bottomCenter'],
+                style: { display: 'none' },
+            }}
+            // scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
+            onRow={(record) => ({
+                onDoubleClick: () => {
+                    onDoubleClick(record);
+                },
+            })}
+            // rowSelection={column.length > 0 ? { ...rowSelection } : null}
+            showSorterTooltip={false}
+            bordered
+            rowSelection={columns.length > 0 ? { ...rowSelection } : null}
 
+        />
+        <div className="flex items-center justify-end wrapper-pagination mt-5">
+            <Select
+                defaultValue={limit}
+                value={limit}
+                // onChange={handleChangePagePerSizes}
+                options={[
+                    {
+                        value: 10,
+                        label: '10',
+                    },
+                    {
+                        value: 20,
+                        label: '20',
+                    },
+                    {
+                        value: 30,
+                        label: '30',
+                    },
+                ]}
+            />
+            <Pagination current={page} showSizeChanger={false} pageSize={limit}
+                //  onChange={handleChangePage} 
+                total={totalItems} />
+        </div>
+        <Modal open={deleteModal} closable={false} footer={null}>
+            <p>Bạn có chắc chắn muốn xoá không?</p>
+            {loading ? <Spin className="mt-[20px] flex justify-center gap-[10px]" /> :
+                <div className='mt-[20px] flex justify-center gap-[10px]'>
+                    <Button className='bg-[#24dc22] text-white' onClick={() => setDeleteModal(false)}>Huỷ</Button>
+                    <Button className='bg-[#ff4d4f] text-white' onClick={onDelete}>Xoá</Button>
+                </div>
+            }
+        </Modal>
     </div>
 
 }
