@@ -69,7 +69,7 @@ function SongDetail({ different }) {
                 full_audio: values?.full_song?.file,
                 full_audio_url: values?.full_song?.url,
                 duration: initalData.duration,
-                unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
+                unit_price: typeof (values?.unitPrice) === 'number' ? values?.unitPrice : Number(values?.unitPrice?.replaceAll(',', ''))
             })
         }
 
@@ -82,7 +82,7 @@ function SongDetail({ different }) {
                 short_audio: values?.short_song.file,
                 full_audio: values?.full_song.file,
                 duration: initalData.duration,
-                unit_price: Number(values?.unitPrice?.replaceAll(',', ''))
+                unit_price: typeof (values?.unitPrice) === 'number' ? values?.unitPrice : Number(values?.unitPrice?.replaceAll(',', ''))
             })
         }
 
