@@ -2,80 +2,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Button, Col, Form, Input, Row } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
-import { FaMusic } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
-import { Option } from "antd/es/mentions";
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
-
-
-
-
-const AsyncSelect = ({ chooseCategory }) => {
-    const [limit, setLimit] = useState(10);
-    const [page, setPage] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
-    // const [currentTotal, setCurrentTotal] = useState(0)
-    const [loading, setLoading] = useState(false)
-    const [users, setUsers] = useState([])
-    const fetchUserList = async () => {
-        const data = await apiFactory.nursingApi.getList({
-            per: limit,
-            page: page,
-        })
-        if (data) {
-            setUsers(data.nursing_staffs.map((e) => <Option key={e.id} value={e.id}>
-                {e.name_kana}
-            </Option>))
-            setTotalItems(data.total_items)
-        }
-
-    }
-    // const onscroll = async (event: any) => {
-    //     if ((event.currentTarget.scrollTop + event.currentTarget.clientHeight) >= event.currentTarget.scrollHeight &&
-    //         (page * limit) < totalItems && !loading) {
-    //         users.push(<Option key={'loading'} value={'loading'} disabled>
-    //             <Spin className="absolute left-[50%]" />
-    //         </Option>)
-    //         setUsers([...users])
-    //         setLoading(true)
-    //         setTimeout(async () => {
-    //             const data = await apiFactory.nursingApi.getList({
-    //                 per: limit,
-    //                 page: page + 1,
-    //             })
-    //             if (data) {
-    //                 users.pop()
-    //                 const newUsers = users.concat(data.nursing_staffs.map((e: any) => <Option key={e.id} value={e.id}>
-    //                     {e.name_kana}
-    //                 </Option>))
-    //                 setUsers(newUsers)
-    //                 setPage(page + 1)
-    //                 setTotalItems(data.total_items)
-    //             }
-    //             setLoading(false)
-    //         }, 500)
-
-    //     }
-    // }
-    useEffect(() => {
-        // fetchUserList()
-    }, [])
-    return <>
-        <Select
-            onChange={(e) => chooseCategory(e)}
-            onPopupScroll={onscroll}
-        >
-            {users}
-        </Select>
-    </>
-
-}
-
 
 function CustomerDetail({ different }) {
     const navigate = useNavigate()
@@ -90,6 +23,7 @@ function CustomerDetail({ different }) {
             file: null
         },
         email: '',
+        phone: '',
         balance: 0
 
     })
@@ -99,20 +33,18 @@ function CustomerDetail({ different }) {
             toast.error('Mật khẩu phải khớp với mật khẩu xác nhận!')
             return
         }
-        let unitPrice = values?.balance
+        let balance = values?.balance
         if (typeof (values?.balance) !== 'number') {
-            unitPrice = Number(values?.balance?.replaceAll(',', ''))
-          }
+            balance = Number(values?.balance?.replaceAll(',', ''))
+        }
         const result = await apiFactory.customerApi.create({
             name: values?.name,
             username: values?.username,
             password: values?.password,
-            // img: {
-            //     url: '',
-            //     file: null
-            // },
+            image: values?.img?.file,
             email: values?.email,
-            balance: unitPrice
+            phone: values?.phone,
+            balance: balance
         })
         if (result.status === 200) {
             toast.success('Tạo khách hàng thành công')
@@ -236,13 +168,6 @@ function CustomerDetail({ different }) {
                     >
                         <CoverImage />
                     </Form.Item>
-
-                    <Form.Item label="Email"
-                        name="email"
-                    >
-                        <Input type='email' />
-                    </Form.Item>
-
                     <Form.Item label="Số dư tài khoản"
                         name="balance"
                     >
@@ -258,10 +183,28 @@ function CustomerDetail({ different }) {
                             thousandsGroupStyle="thousand" thousandSeparator="," decimalScale={2}
                         />
                     </Form.Item>
+                    <Form.Item label="Địa chỉ email"
+                        name="email"
+                    >
+                        <Input type='email' />
+                    </Form.Item>
+                    <Form.Item label="Số điện thoại"
+                        name="phone"
+                    >
+                        <NumericFormat
+                            onKeyPress={(event) => {
+                                if (!/[0-9.]/.test(event.key)) {
+                                    event.preventDefault();
+                                }
+                            }}
+                            // value={value?.unitPrice} disabled={difference.type === 'view' || !value?.unitPriceSetting}
+                            // onChange={onChangeUnitPrice} 
+                            customInput={Input}
+                            maxLength={15}
+                        />
+                    </Form.Item>
                 </Col>
-
             </Row>
-
 
             <StickyFooter >
                 <div className="flex justify-between gap-[5px]">

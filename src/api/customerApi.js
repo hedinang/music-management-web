@@ -19,12 +19,17 @@ class CustomerApi extends BaseApi {
     // ): Promise<DatabasesData> {
     //     return this.put<DatabasesData>(`${DBS}/${id}`, data);
     // }
+
     create(param) {
         param.type = 'CLIENT'
-        return this.post(`${CUSTOMER}/add`, param);
+        return this.post(`${CUSTOMER}/add`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     }
-    // deleteRecord(id: string): Promise<DatabasesData> {
-    //     return this.deleteMany<DatabasesData>(DBS, { id: [id] });
-    // }
+    delete(idList){
+        return this.post(`${CUSTOMER}/delete`, idList);
+    }
 }
 export default CustomerApi;

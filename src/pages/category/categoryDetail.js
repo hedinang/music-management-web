@@ -157,7 +157,6 @@ function CategoryDetail({ different }) {
             form={form}
             // labelCol={{ style: { width: 120 } }}
             layout='vertical'
-
         >
             <Row>
                 <Col span={11}>
@@ -178,8 +177,6 @@ function CategoryDetail({ different }) {
                         required={false}
                     >
                         <CoverImage />
-
-
                     </Form.Item>
                 </Col>
 

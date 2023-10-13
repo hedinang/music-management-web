@@ -221,7 +221,6 @@ function CategoryList() {
                         onDoubleClick(record);
                     },
                 })}
-                // rowSelection={column.length > 0 ? { ...rowSelection } : null}
                 showSorterTooltip={false}
                 bordered
                 rowSelection={columns.length > 0 ? { ...rowSelection } : null}
