@@ -34,7 +34,7 @@ function SongDetail({ different }) {
     const [form] = Form.useForm()
     const [initalData, setInitialData] = useState({
         name: '',
-        author: '',
+        author: {},
         category: [],
         img: {
             url: '',
@@ -60,7 +60,7 @@ function SongDetail({ different }) {
             result = await apiFactory.songApi.update({
                 id: param?.id,
                 name: values?.name,
-                author: values?.author,
+                author: values?.author?.value,
                 category: values?.category?.map(e => e.value),
                 image: values?.img?.file,
                 image_url: values?.img?.url,
@@ -76,7 +76,7 @@ function SongDetail({ different }) {
         if (different.type === 'add') {
             result = await apiFactory.songApi.create({
                 name: values?.name,
-                author: values?.author,
+                author: values?.author?.value,
                 category: values?.category.map(e => e.value),
                 image: values?.img.file,
                 short_audio: values?.short_song.file,
@@ -230,7 +230,10 @@ function SongDetail({ different }) {
             if (result.data) {
                 setInitialData({
                     name: result.data.name,
-                    author: result.data.author,
+                    author: {
+                        value: result?.data?.author?.id,
+                        label: result?.data?.author?.name
+                    },
                     category: result?.data?.category?.map(e => ({
                         value: e.id,
                         label: e.name
@@ -254,7 +257,10 @@ function SongDetail({ different }) {
 
                 form.setFieldsValue({
                     name: result.data.name,
-                    author: result.data.author,
+                    author: {
+                        value: result?.data?.author?.id,
+                        label: result?.data?.author?.name
+                    },
                     category: result?.data?.category?.map(e => ({
                         value: e.id,
                         label: e.name
@@ -279,7 +285,7 @@ function SongDetail({ different }) {
         }
     }
 
-    const AsyncSelect = ({ value, onChange }) => {
+    const AsyncSelectCategory = ({ value, onChange }) => {
         const [limit, setLimit] = useState(10);
         const [page, setPage] = useState(1);
         const [totalItems, setTotalItems] = useState(0);
@@ -415,6 +421,94 @@ function SongDetail({ different }) {
 
     }
 
+    const AsyncSelectAuthor = ({ value, onChange }) => {
+        const [limit, setLimit] = useState(10);
+        const [page, setPage] = useState(1);
+        const [totalItems, setTotalItems] = useState(0);
+        // const [currentTotal, setCurrentTotal] = useState(0)
+        const [loading, setLoading] = useState(false)
+        const [authorList, setAuthorList] = useState([])
+        const fetchAuthorList = async () => {
+            const result = await apiFactory.authorApi.getList({
+                per: limit,
+                page: page,
+            })
+            if (result?.data?.items) {
+                setAuthorList(result?.data?.items?.map(e => ({
+                    component: <Option key={e.id} value={e.id}>
+                        {e.name}
+                    </Option>,
+                    value: e.id,
+                    label: e.name
+                })))
+                setTotalItems(result?.data?.total_items)
+            }
+        }
+
+        const onscroll = async (event) => {
+            if ((event.currentTarget.scrollTop + event.currentTarget.clientHeight) >= event.currentTarget.scrollHeight &&
+                (page * limit) < totalItems && !loading) {
+                authorList.push(<Option key={'loading'} value={'loading'} disabled>
+                    <Spin className="absolute left-[50%]" />
+                </Option>)
+                setAuthorList([...authorList])
+                setLoading(true)
+                setTimeout(async () => {
+                    const data = await apiFactory.categoryApi.getList({
+                        per: limit,
+                        page: page + 1,
+                    })
+                    if (data) {
+                        authorList.pop()
+                        const newAuthorList = authorList.concat(data?.data?.items.map((e) => ({
+                            component: <Option key={e.id} value={e.id}>
+                                {e.name}
+                            </Option>,
+                            value: e.id,
+                            label: e.name
+                        })))
+                        setAuthorList(newAuthorList)
+                        setPage(page + 1)
+                        setTotalItems(data?.data?.total_items)
+                    }
+                    setLoading(false)
+                }, 500)
+
+            }
+        }
+        const chooseAuthor = (e) => {
+            const element = authorList.find(f => f.value === e)
+            if (element) {
+                onChange(element)
+            }
+        }
+        useEffect(() => {
+            fetchAuthorList()
+        }, [])
+        return <>
+            <Select
+                // onChange={(e) => chooseCategory(e)}
+                onPopupScroll={onscroll}
+                // onChange={(e) => {
+                //     const category = categoryList.find((f) => f.value === e)
+                //     value.push(category)
+                //     const cloneCategoryList = categoryList.map((f) => {
+                //         if (f.value === e) f.disabled = true
+                //         return f;
+                //     })
+
+                //     setCategoryList(cloneCategoryList)
+                //     onChange([...value]);
+                // }}
+                onChange={chooseAuthor}
+                disabled={different.type === 'view'}
+                options={authorList}
+                value={value}
+            />
+        </>
+
+    }
+
     useEffect(() => {
         fetchData()
     }, [])
@@ -449,7 +543,8 @@ function SongDetail({ different }) {
                                 message: 'Bắt buộc!',
                             },
                         ]}>
-                        <Input disabled={different.type === 'view'} />
+                        {/* <Input disabled={different.type === 'view'} /> */}
+                        <AsyncSelectAuthor />
                     </Form.Item>
 
                     <Form.Item label="Danh mục"
@@ -460,7 +555,7 @@ function SongDetail({ different }) {
                                 message: 'Bắt buộc!',
                             },
                         ]}>
-                        <AsyncSelect />
+                        <AsyncSelectCategory />
 
                     </Form.Item>
 

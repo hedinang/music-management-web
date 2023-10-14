@@ -149,7 +149,12 @@ const router = createBrowserRouter([
                 path: '/author/:id',
                 element: <AuthorDetail
                     different={{ type: 'view' }} />
-            }
+            },
+            {
+                path: '/author/edit/:id',
+                element: <AuthorDetail
+                    different={{ type: 'edit' }} />
+            },
         ]
     },
 

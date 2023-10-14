@@ -30,8 +30,8 @@ class AuthorApi extends BaseApi {
         });
     }
 
-    delete(idList) {
-        return this.deleteMany(`${AUTHOR}/delete`, idList);
+    delete(idList){
+        return this.post(`${AUTHOR}/delete`, idList);
     }
 }
 export default AuthorApi;
