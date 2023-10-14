@@ -7,18 +7,19 @@ class CustomerApi extends BaseApi {
         param.type = 'CLIENT'
         return this.post(`${CUSTOMER}/list`, param);
     }
-    // getOneRecord(id: string): Promise<DatabasesData | null> {
-    //     if (id) {
-    //         return this.get<DatabasesData>(`${DBS}/${id}`);
-    //     }
-    //     return Promise.resolve(null);
-    // }
-    // updateRecord(
-    //     id: string,
-    //     data: bodyRequestCreateDatabase,
-    // ): Promise<DatabasesData> {
-    //     return this.put<DatabasesData>(`${DBS}/${id}`, data);
-    // }
+    getById(id) {
+        if (id) {
+            return this.get(`${CUSTOMER}/admin/${id}`);
+        }
+        return Promise.resolve(null);
+    }
+    update(param) {
+        return this.put(`${CUSTOMER}/update`, param, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+    }
 
     create(param) {
         param.type = 'CLIENT'

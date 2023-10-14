@@ -193,6 +193,7 @@ function CustomerList() {
         const result = await apiFactory.customerApi.getList({ limit, page })
         setCustomerList(result?.data?.items?.map((e, i) => (
             {
+                id: e?.id,
                 key: e?.id,
                 index: (page - 1) * limit + i + 1,
                 username: e?.username,
@@ -215,6 +216,9 @@ function CustomerList() {
             toast.error(result?.message)
         }
     }
+    const onDoubleClick = (record) => {
+        navigate(`/customer/${record.id}`);
+    };
 
     useEffect(() => {
         fetchData()
@@ -277,12 +281,11 @@ function CustomerList() {
                 style: { display: 'none' },
             }}
             scroll={{ y: 'calc(100vh - 150px)', x: 2000 }}
-            // onRow={(record: any) => ({
-            //     onDoubleClick: () => {
-            //         onDoubleClick(record);
-            //     },
-            // })}
-            // rowSelection={column.length > 0 ? { ...rowSelection } : null}
+            onRow={(record) => ({
+                onDoubleClick: () => {
+                    onDoubleClick(record);
+                },
+            })}
             showSorterTooltip={false}
             bordered
             rowSelection={columns.length > 0 ? { ...rowSelection } : null}

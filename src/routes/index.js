@@ -125,6 +125,16 @@ const router = createBrowserRouter([
                 element: <CustomerDetail
                     different={{ type: 'add' }} />
             },
+            {
+                path: '/customer/:id',
+                element: <CustomerDetail
+                    different={{ type: 'view' }} />
+            },
+            {
+                path: '/customer/edit/:id',
+                element: <CustomerDetail
+                    different={{ type: 'edit' }} />
+            },
 
             {
                 path: '/author/list',
