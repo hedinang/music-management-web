@@ -78,7 +78,7 @@ const columns = [
                     </div>
                 ),
                 dataIndex: 'author',
-                render: (value, record) => record.song.author,
+                render: (value, record) => record.author,
                 width: '70px'
 
             },
@@ -101,7 +101,7 @@ const columns = [
                     </div>
                 ),
                 dataIndex: 'customerName',
-                render: (value, record) => record.customer.name,
+                render: (value, record) => record?.customer?.name ? record?.customer?.name : record?.customer?.username,
                 width: '70px'
 
             },
