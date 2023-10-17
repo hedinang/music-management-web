@@ -9,7 +9,7 @@ class CategoryApi extends BaseApi {
 
     getById(id) {
         if (id) {
-            return this.get(`${CATEGORY}/${id}`);
+            return this.get(`${CATEGORY}/admin/${id}`);
         }
         return Promise.resolve(null);
     }
