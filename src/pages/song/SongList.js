@@ -286,7 +286,7 @@ function SongList() {
 
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [limit, page])
 
     return <div className='category-list'>
         <div className='button-header'>
@@ -360,7 +360,7 @@ function SongList() {
             <Select
                 defaultValue={limit}
                 value={limit}
-                // onChange={handleChangePagePerSizes}
+                onChange={(e) => setLimit(e)}
                 options={[
                     {
                         value: 10,
@@ -377,7 +377,7 @@ function SongList() {
                 ]}
             />
             <Pagination current={page} showSizeChanger={false} pageSize={limit}
-                //  onChange={handleChangePage} 
+                onChange={(e) => setPage(e)}
                 total={totalItems} />
         </div>
         <Modal open={deleteModal} closable={false} footer={null}>

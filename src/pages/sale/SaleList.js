@@ -249,11 +249,9 @@ function SaleList() {
         }
     }
 
-
-
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [page, limit])
 
     return <div className='category-list'>
         <div className='button-header'>
@@ -326,7 +324,7 @@ function SaleList() {
             <Select
                 defaultValue={limit}
                 value={limit}
-                // onChange={handleChangePagePerSizes}
+                onChange={(e) => setLimit(e)}
                 options={[
                     {
                         value: 10,
@@ -343,7 +341,7 @@ function SaleList() {
                 ]}
             />
             <Pagination current={page} showSizeChanger={false} pageSize={limit}
-                //  onChange={handleChangePage} 
+                onChange={(e) => setPage(e)}
                 total={totalItems} />
         </div>
         <Modal open={deleteModal} closable={false} footer={null}>

@@ -295,7 +295,7 @@ function CustomerList() {
             <Select
                 defaultValue={limit}
                 value={limit}
-                // onChange={handleChangePagePerSizes}
+                onChange={(e) => setLimit(e)}
                 options={[
                     {
                         value: 10,
