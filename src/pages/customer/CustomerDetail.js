@@ -2,13 +2,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Modal, Radio, Row, Spin } from 'antd';
+import { Button, Col, Form, Input, Modal, Radio, Row, Select, Spin, Tag } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import apiFactory from '../../api';
 import { NumericFormat } from 'react-number-format';
 import { toast } from 'react-toastify';
+import { Option } from 'antd/es/mentions';
 
 function CustomerDetail({ different }) {
     const param = useParams()
@@ -24,6 +25,7 @@ function CustomerDetail({ different }) {
             url: '',
             file: null
         },
+        favorite: [],
         email: '',
         phone: '',
         balance: 0,
@@ -53,7 +55,8 @@ function CustomerDetail({ different }) {
                 email: values?.email,
                 phone: values?.phone,
                 balance: balance,
-                change_password: values?.changePassword
+                favorite: values?.favorite?.map(e => e.value),
+                change_password: values?.changePassword,
             })
         }
 
@@ -65,7 +68,8 @@ function CustomerDetail({ different }) {
                 image: values?.img?.file,
                 email: values?.email,
                 phone: values?.phone,
-                balance: balance
+                balance: balance,
+                favorite: values?.favorite?.map(e => e.value)
             })
         }
         setLoading(false)
@@ -133,6 +137,149 @@ function CustomerDetail({ different }) {
         </label>
     }, [])
 
+    const AsyncSelectFavoriteSong = ({ value, onChange }) => {
+        const [limit, setLimit] = useState(10);
+        const [page, setPage] = useState(1);
+        const [totalItems, setTotalItems] = useState(0);
+        // const [currentTotal, setCurrentTotal] = useState(0)
+        const [loading, setLoading] = useState(false)
+        const [songList, setSongList] = useState([])
+        const fetchSongList = async () => {
+            const result = await apiFactory.songApi.getList({
+                per: limit,
+                page: page,
+            })
+            if (result?.data?.items) {
+                const choosedList = value.map(e => e.value)
+
+                setSongList(result?.data?.items?.map(e => {
+                    if (!choosedList.includes(e.id)) {
+                        return {
+                            component: <Option key={e.id} value={e.id}>
+                                {e.name}
+                            </Option>,
+                            disabled: false,
+                            value: e.id,
+                            label: e.name
+                        }
+                    }
+                    return {
+                        component: <Option key={e.id} value={e.id}>
+                            {e.name}
+                        </Option>,
+                        disabled: true,
+                        value: e.id,
+                        label: e.name
+                    }
+                }))
+                // .filter(e => {
+                //     return !choosedList.includes(e.id)
+                // })
+
+                // setCategoryList(availableList?.map((e) => ({
+                //     component: <Option key={e.id} value={e.id}>
+                //         {e.name}
+                //     </Option>,
+                //     disabled: false,
+                //     value: e.id,
+                //     label: e.name
+                // })))
+                setTotalItems(result?.data?.total_items)
+            }
+        }
+
+        const removeItem = (event, e) => {
+            event.preventDefault();
+            const index = value.findIndex((f) => f.value === e)
+            value.splice(index, 1)
+            const cloneSongList = songList.map((f) => {
+                if (f.value === e) {
+                    f.disabled = false
+                }
+                return f
+            })
+            setSongList(cloneSongList)
+            onChange(value);
+        }
+        const onscroll = async (event) => {
+            if ((event.currentTarget.scrollTop + event.currentTarget.clientHeight) >= event.currentTarget.scrollHeight &&
+                (page * limit) < totalItems && !loading) {
+                songList.push(<Option key={'loading'} value={'loading'} disabled>
+                    <Spin className="absolute left-[50%]" />
+                </Option>)
+                setSongList([...songList])
+                setLoading(true)
+                setTimeout(async () => {
+                    const data = await apiFactory.categoryApi.getList({
+                        per: limit,
+                        page: page + 1,
+                    })
+                    if (data) {
+                        songList.pop()
+                        const newCategoryList = songList.concat(data?.data?.items.map((e) => ({
+                            component: <Option key={e.id} value={e.id}>
+                                {e.name}
+                            </Option>,
+                            disabled: false,
+                            value: e.id,
+                            label: e.name
+                        })))
+                        setSongList(newCategoryList)
+                        setPage(page + 1)
+                        setTotalItems(data?.data?.total_items)
+                    }
+                    setLoading(false)
+                }, 500)
+
+            }
+        }
+        useEffect(() => {
+            fetchSongList()
+        }, [])
+        return <>
+            <Row>
+                <Col span={11}>
+                    <Select
+                        // onChange={(e) => chooseCategory(e)}
+                        onPopupScroll={onscroll}
+                        onChange={(e) => {
+                            const category = songList.find((f) => f.value === e)
+                            value.push(category)
+                            const cloneSongList = songList.map((f) => {
+                                if (f.value === e) f.disabled = true
+                                return f;
+                            })
+
+                            setSongList(cloneSongList)
+                            onChange([...value]);
+                        }}
+                        disabled={different.type === 'view'}
+                        value=''
+                    >
+                        {songList.filter(e => e.disabled === false).map(e => e.component)}
+                    </Select>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    <div className="patient-list">
+                        {value?.map((e) => {
+                            return <Tag
+                                color={'blue'}
+                                closable={different.type !== 'view'}
+                                onClose={(event) => removeItem(event, e.value)}
+                                // style={{ marginRight: 3 }}
+                                className='h-[30px] text-[15px] mt-[5px]'
+                            >
+                                {e.label}
+                            </Tag>
+                        })}
+                    </div>
+                </Col>
+            </Row>
+        </>
+
+    }
     const fetchData = async () => {
         if (param.id) {
             const result = await apiFactory.customerApi.getById(param.id)
@@ -147,7 +294,11 @@ function CustomerDetail({ different }) {
                     email: result?.data?.email,
                     phone: result?.data?.phone,
                     balance: result?.data?.balance,
-                    changePassword: false
+                    changePassword: false,
+                    favorite: result?.data?.favorite?.map(e => ({
+                        value: e.id,
+                        label: e.name
+                    })),
                 })
 
                 form.setFieldsValue({
@@ -160,7 +311,11 @@ function CustomerDetail({ different }) {
                     email: result?.data?.email,
                     phone: result?.data?.phone,
                     balance: result?.data?.balance,
-                    changePassword: false
+                    changePassword: false,
+                    favorite: result?.data?.favorite?.map(e => ({
+                        value: e.id,
+                        label: e.name
+                    })),
                 })
             }
         }
@@ -206,7 +361,7 @@ function CustomerDetail({ different }) {
                             </Radio.Group>
                         </Form.Item>
                     }
-                    {initalData.changePassword &&
+                    {(different.type === 'add' || initalData.changePassword) &&
                         <>
                             <Form.Item label="Mật khẩu"
                                 name="password"
@@ -280,7 +435,14 @@ function CustomerDetail({ different }) {
                     </Form.Item>
                 </Col>
             </Row>
-
+            <Row>
+                <Col span={24}>
+                    <Form.Item label="Danh sách bài hát ưa thích"
+                        name="favorite">
+                        <AsyncSelectFavoriteSong />
+                    </Form.Item>
+                </Col>
+            </Row>
             <StickyFooter >
                 <div className="flex justify-between gap-[5px]">
                     <Button className='bg-[#868e96] text-white ml-[230px]' onClick={() => navigate('/customer/list')}>Quay lại</Button>

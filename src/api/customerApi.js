@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CUSTOMER, LOGIN } from './apiConstant';
+import { CUSTOMER } from './apiConstant';
 import BaseApi from './baseApi';
 
 class CustomerApi extends BaseApi {

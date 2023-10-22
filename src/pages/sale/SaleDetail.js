@@ -4,8 +4,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import './style.scss';
 import { Button, Col, Form, Input, Modal, Row, Select, Spin } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
-import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
-import { FaMusic } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { Option } from "antd/es/mentions";
@@ -144,11 +142,6 @@ function SaleDetail({ different }) {
             totalPrice: 0
         }
     })
-    const [categoryList, setCategoryList] = useState([])
-    const chooseCategory = (e) => {
-        const u = categoryList.find(f => f.value === e)
-        // setChoosedUser(u?.value)
-    }
     const onFinish = async(values) => {
         setLoading(false)
         const result = await apiFactory.saleApi.create({
@@ -164,59 +157,6 @@ function SaleDetail({ different }) {
         }
     }
 
-    const FileMusic = useCallback(({ value, onChange }) => {
-        const uploadMusic = (e) => {
-            // onChange({
-            //     ...value,
-            //     file: e.target.files[0]
-            // })
-
-            const file = e.target.files[0];
-            const reader = new FileReader();
-
-            if (file) {
-                reader.readAsDataURL(file);
-                reader.onloadend = () => {
-                    onChange({
-                        file: e.target.files[0],
-                        url: reader.result
-                    })
-                };
-            } else {
-                onChange({
-                    file: null,
-                    url: ''
-                })
-
-            }
-        }
-
-        const removeImg = (e) => {
-            e.preventDefault()
-            onChange({
-                file: null,
-                url: ''
-            })
-        }
-
-        return <div className='flex flex-row items-center gap-[10px]'>
-
-            <label
-                htmlFor="music"
-                className="w-[100px] h-[100px] bg-white border-[#5A96D7] boder-[1px] rounded-xl border-solid flex items-center justify-center pl-3 pr-3 cursor-pointer"
-                style={{ border: '1px solid #5A96D7' }}>
-                <input type="file" id="music" className="hidden" style={{ display: 'none' }}
-                    accept="audio/*, video/*" onChange={uploadMusic} />
-                <div className="flex flex-row items-center justify-center gap-[5px]">
-                    <div className='text-[30px]'>+</div>
-                    <FaMusic size={30} />
-                </div>
-            </label>
-            {value.url && <audio controls={true} src={value.url} />}
-            {value.url && <DeleteFilled className='text-[red]' onClick={removeImg} />}
-        </div>
-
-    }, [])
     return <div className='category-detail'>
         <Form
             initialValues={initalData}
