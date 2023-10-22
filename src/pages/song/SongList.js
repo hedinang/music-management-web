@@ -344,7 +344,7 @@ function SongList() {
                 position: ['bottomCenter'],
                 style: { display: 'none' },
             }}
-            // scroll={{ y: 'calc(100vh - 388px)', x: 2000 }}
+            scroll={{ y: 'calc(100vh - 150px)', x: 2000 }}
             onRow={(record) => ({
                 onDoubleClick: () => {
                     onDoubleClick(record);
