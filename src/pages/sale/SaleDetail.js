@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Select, Spin } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
 import { FaMusic } from 'react-icons/fa';
@@ -130,6 +130,7 @@ const AsyncSelect = ({ type, value, onChange, initalData, setInitialData }) => {
 function SaleDetail({ different }) {
     const navigate = useNavigate()
     const [form] = Form.useForm()
+    const [loading, setLoading] = useState(false)
     const [initalData, setInitialData] = useState({
         customer: {
             name: '',
@@ -149,10 +150,12 @@ function SaleDetail({ different }) {
         // setChoosedUser(u?.value)
     }
     const onFinish = async(values) => {
+        setLoading(false)
         const result = await apiFactory.saleApi.create({
             customerId: values?.customer,
             songId: values?.song
         })
+        setLoading(true)
         if (result.status === 200) {
             toast.success('Tạo đơn hàng thành công')
             navigate('/sale/list')
@@ -280,6 +283,9 @@ function SaleDetail({ different }) {
                 </div>
             </StickyFooter>
         </Form>
+        <Modal title="Hệ thống đang xử lý" open={loading} closable={false} footer={null}>
+            <Spin className="mt-[20px] flex justify-center gap-[10px]" />
+        </Modal>
     </div>
 
 

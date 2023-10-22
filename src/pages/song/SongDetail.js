@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Row, Select, Spin, Tag } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Select, Spin, Tag } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
 import { FaMusic } from 'react-icons/fa';
@@ -53,9 +53,11 @@ function SongDetail({ different }) {
         duration: 0
 
     })
+    const [loading, setLoading] = useState(false)
 
     const onFinish = async (values) => {
         let result
+        setLoading(true)
         if (different.type === 'edit') {
             result = await apiFactory.songApi.update({
                 id: param?.id,
@@ -85,6 +87,7 @@ function SongDetail({ different }) {
                 unit_price: typeof (values?.unitPrice) === 'number' ? values?.unitPrice : Number(values?.unitPrice?.replaceAll(',', ''))
             })
         }
+        setLoading(false)
 
         if (result?.status === 200) {
             if (different.type === 'add') {
@@ -623,8 +626,6 @@ function SongDetail({ different }) {
                 </Col>
 
             </Row>
-
-
             <StickyFooter >
                 <div className="flex justify-between gap-[5px]">
                     <Button className='bg-[#868e96] text-white ml-[230px]' onClick={() => navigate('/song/list')}>Quay lại</Button>
@@ -636,6 +637,9 @@ function SongDetail({ different }) {
                 </div>
             </StickyFooter>
         </Form>
+        <Modal title="Hệ thống đang xử lý" open={loading} closable={false} footer={null}>
+            <Spin className="mt-[20px] flex justify-center gap-[10px]" />
+        </Modal>
     </div>
 
 

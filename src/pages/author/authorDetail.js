@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Spin } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,6 +15,7 @@ function AuthorDetail({ different }) {
     const param = useParams()
     const navigate = useNavigate()
     const [form] = Form.useForm()
+    const [loading, setLoading] = useState(false)
     const [initalData, setInitialData] = useState({
         authorName: '',
         img: {
@@ -27,6 +28,7 @@ function AuthorDetail({ different }) {
         if (values?.authorName.trim() === '') {
             return toast.error('Tên loại nhạc không được để trống!')
         }
+        setLoading(true)
 
         let result
         if (different.type === 'edit') {
@@ -44,7 +46,7 @@ function AuthorDetail({ different }) {
                 file: values?.img?.file
             })
         }
-
+        setLoading(false)
         if (result?.status === 200) {
             if (different.type === 'add') {
                 toast.success('Tạo danh mục nhạc thành công')
@@ -197,6 +199,9 @@ function AuthorDetail({ different }) {
                 </div>
             </StickyFooter>
         </Form>
+        <Modal title="Hệ thống đang xử lý" open={loading} closable={false} footer={null}>
+            <Spin className="mt-[20px] flex justify-center gap-[10px]" />
+        </Modal>
     </div>
 
 

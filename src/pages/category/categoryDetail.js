@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './style.scss';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Spin } from 'antd';
 import StickyFooter from '../../components/stickyFooter/StickyFooter';
 import { DeleteFilled, FileImageOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,6 +15,7 @@ function CategoryDetail({ different }) {
     const param = useParams()
     const navigate = useNavigate()
     const [form] = Form.useForm()
+    const [loading, setLoading] = useState(false)
     const [initalData, setInitialData] = useState({
         musicType: '',
         img: {
@@ -27,7 +28,7 @@ function CategoryDetail({ different }) {
         if (values?.musicType.trim() === '') {
             return toast.error('Tên loại nhạc không được để trống!')
         }
-
+        setLoading(true)
         let result
         if (different.type === 'edit') {
             result = await apiFactory.categoryApi.update({
@@ -44,6 +45,7 @@ function CategoryDetail({ different }) {
                 file: values?.img?.file
             })
         }
+        setLoading(false)
 
         if (result?.status === 200) {
             if (different.type === 'add') {
@@ -181,8 +183,6 @@ function CategoryDetail({ different }) {
                 </Col>
 
             </Row>
-
-
             <StickyFooter >
                 <div className="flex justify-between gap-[5px]">
                     <Button className='bg-[#868e96] text-white ml-[230px]' onClick={() => navigate('/category/list')}>Quay lại</Button>
@@ -194,6 +194,9 @@ function CategoryDetail({ different }) {
                 </div>
             </StickyFooter>
         </Form>
+        <Modal title="Hệ thống đang xử lý" open={loading} closable={false} footer={null}>
+            <Spin className="mt-[20px] flex justify-center gap-[10px]" />
+        </Modal>
     </div>
 
 

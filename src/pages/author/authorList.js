@@ -233,7 +233,7 @@ function AuthorList() {
             <Select
                 defaultValue={limit}
                 value={limit}
-                // onChange={handleChangePagePerSizes}
+                onChange={(e) => setLimit(e)}
                 options={[
                     {
                         value: 10,
@@ -250,7 +250,7 @@ function AuthorList() {
                 ]}
             />
             <Pagination current={page} showSizeChanger={false} pageSize={limit}
-                //  onChange={handleChangePage} 
+                onChange={(e) => setPage(e)}
                 total={totalItems} />
         </div>
         <Modal open={deleteModal} closable={false} footer={null}>
