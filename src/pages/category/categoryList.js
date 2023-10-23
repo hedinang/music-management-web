@@ -47,7 +47,7 @@ const columns = [
                 ),
                 dataIndex: 'index',
                 render: (value, record) => <div className='text-center'>{record.index}</div>,
-                width: 150
+                width: '70px'
             },
         ],
     },
@@ -69,7 +69,7 @@ const columns = [
                 ),
                 dataIndex: 'name',
                 render: (value, record) => record.name,
-                width: 500
+                width: '200px'
 
             },
         ],
@@ -92,7 +92,7 @@ const columns = [
                 ),
                 dataIndex: 'createdAt',
                 render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: 500
+                width: '200px'
             },
         ],
     },
@@ -146,7 +146,7 @@ function CategoryList() {
                 createdAt: formatTime(e?.createdAt),
             }
         )))
-        
+
         setTotalItems(result?.data?.total_items)
     }
 
@@ -215,7 +215,7 @@ function CategoryList() {
                     position: ['bottomCenter'],
                     style: { display: 'none' },
                 }}
-                scroll={{ y: 'calc(100vh - 150px)', x: 2000 }}
+                scroll={{ y: 'calc(100vh - 150px)' }}
                 onRow={(record) => ({
                     onDoubleClick: () => {
                         onDoubleClick(record);

@@ -32,7 +32,7 @@ const columns = [
                 ),
                 dataIndex: 'index',
                 render: (value, record) => <div className='text-center'>{record.index}</div>,
-                width: 150
+                width: '60px'
             },
         ],
     },
@@ -54,7 +54,7 @@ const columns = [
                 ),
                 dataIndex: 'name',
                 render: (value, record) => record.name,
-                width: 400
+                width: '100px'
 
             },
         ],
@@ -84,7 +84,7 @@ const columns = [
                 >
                     {e}
                 </Tag>)),
-                width: 300
+                width: '70px'
             },
         ],
     },
@@ -108,7 +108,7 @@ const columns = [
                 ),
                 dataIndex: 'duration',
                 render: (value, record) => record.duration,
-                width: 150
+                width: '70px'
             },
         ],
     },
@@ -133,7 +133,7 @@ const columns = [
                 ),
                 dataIndex: 'author',
                 render: (value, record) => record.author,
-                width: 150
+                width: '70px'
             },
         ],
     },
@@ -156,7 +156,7 @@ const columns = [
                 ),
                 dataIndex: 'unitPrice',
                 render: (value, record) => record.unitPrice,
-                width: 150
+                width: '70px'
             },
         ],
     },
@@ -179,7 +179,7 @@ const columns = [
                 ),
                 dataIndex: 'totalPrice',
                 render: (value, record) => record.totalPrice,
-                width: 150
+                width: '70px'
             },
         ],
     },
@@ -201,7 +201,7 @@ const columns = [
                 ),
                 dataIndex: 'createdAt',
                 render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: 300
+                width: '70px'
             },
         ],
     },
@@ -344,7 +344,7 @@ function SongList() {
                 position: ['bottomCenter'],
                 style: { display: 'none' },
             }}
-            scroll={{ y: 'calc(100vh - 150px)', x: 2000 }}
+            scroll={{ y: 'calc(100vh - 150px)' }}
             onRow={(record) => ({
                 onDoubleClick: () => {
                     onDoubleClick(record);
