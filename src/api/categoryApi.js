@@ -30,8 +30,8 @@ class CategoryApi extends BaseApi {
         });
     }
 
-    delete(idList) {
-        return this.deleteMany(`${CATEGORY}/delete`, idList);
+    delete(idList){
+        return this.post(`${CATEGORY}/delete`, idList);
     }
 }
 export default CategoryApi;
