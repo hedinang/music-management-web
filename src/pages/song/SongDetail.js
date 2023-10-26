@@ -512,6 +512,18 @@ function SongDetail({ different }) {
 
     }
 
+    const onDelete = async () => {
+        setLoading(true)
+        const result = await apiFactory.songApi.delete([param.id])
+        setLoading(false)
+        if (result.status === 200) {
+            toast.success('Xoá thành công')
+            navigate('/song/list')
+        } else {
+            toast.error(result?.message)
+        }
+    }
+
     useEffect(() => {
         fetchData()
     }, [])
@@ -632,7 +644,7 @@ function SongDetail({ different }) {
                     <div className='flex gap-[5px]'>
                         {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white' htmlType="submit">Lưu</Button>}
                         {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white' onClick={() => navigate(`/song/edit/${param.id}`)}>Sửa</Button>}
-                        {different.type === 'view' && <Button className='bg-[#ed2727] text-white'>Xoá</Button>}
+                        {different.type === 'view' && <Button className='bg-[#ed2727] text-white' onClick={onDelete}>Xoá</Button>}
                     </div>
                 </div>
             </StickyFooter>

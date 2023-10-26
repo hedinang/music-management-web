@@ -116,6 +116,17 @@ function AuthorDetail({ different }) {
         </label>
     }, [different])
 
+    const onDelete = async () => {
+        setLoading(true)
+        const result = await apiFactory.authorApi.delete([param.id])
+        setLoading(false)
+        if (result.status === 200) {
+            toast.success('Xoá thành công')
+            navigate('/author/list')
+        } else {
+            toast.error(result?.message)
+        }
+    }
 
     const fetchData = async () => {
         if (param.id) {
@@ -194,7 +205,7 @@ function AuthorDetail({ different }) {
                     <div className='flex gap-[5px]'>
                         {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white' htmlType="submit">Lưu</Button>}
                         {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white' onClick={() => navigate(`/author/edit/${param.id}`)}>Sửa</Button>}
-                        {different.type === 'view' && <Button className='bg-[#ed2727] text-white'>Xoá</Button>}
+                        {different.type === 'view' && <Button className='bg-[#ed2727] text-white' onClick={onDelete}>Xoá</Button>}
                     </div>
                 </div>
             </StickyFooter>

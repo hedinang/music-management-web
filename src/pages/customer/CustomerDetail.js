@@ -280,6 +280,19 @@ function CustomerDetail({ different }) {
         </>
 
     }
+
+    const onDelete = async () => {
+        setLoading(true)
+        const result = await apiFactory.customerApi.delete([param.id])
+        setLoading(false)
+        if (result.status === 200) {
+            toast.success('Xoá thành công')
+            navigate('/customer/list')
+        } else {
+            toast.error(result?.message)
+        }
+    }
+
     const fetchData = async () => {
         if (param.id) {
             const result = await apiFactory.customerApi.getById(param.id)
@@ -320,6 +333,7 @@ function CustomerDetail({ different }) {
             }
         }
     }
+
     useEffect(() => {
         fetchData()
     }, [])
@@ -449,7 +463,7 @@ function CustomerDetail({ different }) {
                     <div className='flex gap-[5px]'>
                         {different.type !== 'view' && <Button className='ml-auto bg-[#007dce] text-white' htmlType="submit">Lưu</Button>}
                         {different.type === 'view' && <Button className='ml-auto bg-[#aec57d] text-white' onClick={() => navigate(`/customer/edit/${param.id}`)}>Sửa</Button>}
-                        {different.type === 'view' && <Button className='bg-[#ed2727] text-white'>Xoá</Button>}
+                        {different.type === 'view' && <Button className='bg-[#ed2727] text-white' onClick={onDelete}>Xoá</Button>}
                     </div>
                 </div>
             </StickyFooter>
