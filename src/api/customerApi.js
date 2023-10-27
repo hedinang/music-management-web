@@ -29,8 +29,13 @@ class CustomerApi extends BaseApi {
             }
         });
     }
-    delete(idList){
+
+    delete(idList) {
         return this.post(`${CUSTOMER}/delete`, idList);
+    }
+
+    logout() {
+        return this.post(`${CUSTOMER}/logout`);
     }
 }
 export default CustomerApi;

@@ -12,6 +12,7 @@ import React from 'react';
 
 import './style.scss';
 import Cookies from 'js-cookie';
+import apiFactory from '../../api';
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -44,7 +45,8 @@ const SideBar = () => {
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
-    const logout = ()=>{
+    const logout = async () => {
+        await apiFactory.customerApi.logout()
         Cookies.remove('access_token')
         navigate('/login')
     }
