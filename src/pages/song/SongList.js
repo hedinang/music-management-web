@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import './style.scss';
 import { Button, Input, Modal, Pagination, Select, Spin, Table, Tag } from 'antd';
@@ -11,202 +11,9 @@ import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { toast } from 'react-toastify';
-
-const columns = [
-    {
-        title: 'STT',
-        dataIndex: 'index',
-        key: 'index',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'index',
-                render: (value, record) => <div className='text-center'>{record.index}</div>,
-                width: '60px'
-            },
-        ],
-    },
-    {
-        title: 'Tên bài hát',
-        dataIndex: 'name',
-        key: 'name',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'name',
-                render: (value, record) => record.name,
-                width: '100px'
-
-            },
-        ],
-    },
-    {
-        title: 'Danh mục',
-        dataIndex: 'category',
-        key: 'category',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'category',
-                render: (value, record) => record?.category?.map(e => (<Tag
-                    color={'blue'}
-                    closable={false}
-                    className='text-[15px]'
-                >
-                    {e}
-                </Tag>)),
-                width: '70px'
-            },
-        ],
-    },
-
-    {
-        title: 'Độ dài bài hát (Phút)',
-        dataIndex: 'duration',
-        key: 'duration',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'duration',
-                render: (value, record) => record.duration,
-                width: '70px'
-            },
-        ],
-    },
+import { NumericFormat } from 'react-number-format';
 
 
-    {
-        title: 'Tác giả',
-        dataIndex: 'author',
-        key: 'author',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'author',
-                render: (value, record) => record.author,
-                width: '70px'
-            },
-        ],
-    },
-    {
-        title: 'Giá / 1 phút (VNĐ)',
-        dataIndex: 'unitPrice',
-        key: 'unitPrice',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'unitPrice',
-                render: (value, record) => record.unitPrice,
-                width: '70px'
-            },
-        ],
-    },
-    {
-        title: 'Giá cả bài (VNĐ)',
-        dataIndex: 'totalPrice',
-        key: 'totalPrice',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'totalPrice',
-                render: (value, record) => record.totalPrice,
-                width: '70px'
-            },
-        ],
-    },
-    {
-        title: 'Ngày tạo',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'createdAt',
-                render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: '70px'
-            },
-        ],
-    },
-
-];
 function SongList() {
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
@@ -221,6 +28,233 @@ function SongList() {
     const [deleteModal, setDeleteModal] = useState(false)
     const [songList, setSongList] = useState([])
     const [loading, setLoading] = useState(false)
+
+    const [search, setSearch] = useState({
+        name: null,
+        author: null,
+        category: null,
+        unit_price: null,
+        duration: null,
+        total_price: null
+    })
+
+    const columns = useMemo(() => [
+        {
+            title: 'STT',
+            dataIndex: 'index',
+            key: 'index',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    dataIndex: 'index',
+                    render: (value, record) => <div className='text-center'>{record.index}</div>,
+                    width: '40px'
+                },
+            ],
+        },
+        {
+            title: 'Tên bài hát',
+            dataIndex: 'name',
+            key: 'name',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                value={search.name}
+                                onChange={(e) => {
+                                    setSearch({ ...search, name: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'name',
+                    render: (value, record) => record.name,
+                    width: '100px'
+
+                },
+            ],
+        },
+        {
+            title: 'Danh mục',
+            dataIndex: 'category',
+            key: 'category',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'category',
+                    render: (value, record) => record?.category?.map(e => (<Tag
+                        color={'blue'}
+                        closable={false}
+                        className='text-[15px]'
+                    >
+                        {e}
+                    </Tag>)),
+                    width: '70px'
+                },
+            ],
+        },
+
+        {
+            title: 'Độ dài bài hát (Phút)',
+            dataIndex: 'duration',
+            key: 'duration',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                onChange={(e) => {
+                                    setSearch({ ...search, duration: Number(e.target.value.replaceAll(',', '')) })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'duration',
+                    render: (value, record) => record.duration,
+                    width: '70px'
+                },
+            ],
+        },
+        {
+            title: 'Tác giả',
+            dataIndex: 'author',
+            key: 'author',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                onChange={(e) => {
+                                    setSearch({ ...search, author: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'author',
+                    render: (value, record) => record.author,
+                    width: '70px'
+                },
+            ],
+        },
+        {
+            title: 'Giá / 1 phút (VNĐ)',
+            dataIndex: 'unitPrice',
+            key: 'unitPrice',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                onChange={(e) => {
+                                    setSearch({ ...search, unit_price: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            /> */}
+                            <NumericFormat
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9.]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    setSearch({ ...search, unit_price: Number(e.target.value.replaceAll(',', '')) })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                                customInput={Input}
+                                thousandsGroupStyle="thousand" thousandSeparator="," decimalScale={2}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'unitPrice',
+                    render: (value, record) => record.unitPrice,
+                    width: '70px'
+                },
+            ],
+        },
+        {
+            title: 'Giá cả bài (VNĐ)',
+            dataIndex: 'totalPrice',
+            key: 'totalPrice',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    // title: (
+                    //     <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                    //         <Input
+                    //             className="column-input-search"
+                    //             placeholder={'Tìm kiếm'}
+                    //         // value={querySearch.member_code}
+                    //         // onChange={(e) => onSearch('member_code', e.target.value)}
+                    //         />
+                    //     </div>
+                    // ),
+                    dataIndex: 'totalPrice',
+                    render: (value, record) => record.totalPrice,
+                    width: '70px'
+                },
+            ],
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            children: [
+                {
+                    // title: (
+                    //     <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                    //         <Input
+                    //             className="column-input-search"
+                    //             placeholder={'Tìm kiếm'}
+                    //         // value={querySearch.member_code}
+                    //         // onChange={(e) => onSearch('member_code', e.target.value)}
+                    //         />
+                    //     </div>
+                    // ),
+                    dataIndex: 'createdAt',
+                    render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
+                    width: '70px'
+                },
+            ],
+        },
+
+    ], [search])
 
     const rowSelection = {
         columnWidth: 15,
@@ -246,7 +280,8 @@ function SongList() {
     const fetchData = async () => {
         const result = await apiFactory.songApi.getList({
             limit: limit,
-            page: page
+            page: page,
+            search: search
         })
 
         setSongList(result?.data?.items?.map((e, i) => (
@@ -257,7 +292,7 @@ function SongList() {
                 name: e?.name,
                 category: e?.category?.map(f => f.name),
                 duration: e?.duration,
-                author: e?.author,
+                author: e?.author?.name,
                 unitPrice: e?.unit_price,
                 totalPrice: e?.unit_price * e?.duration,
                 createdAt: formatTime(e?.created_at),
