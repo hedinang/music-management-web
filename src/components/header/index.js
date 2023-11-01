@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Layout } from 'antd';
 import React from 'react';
 import './style.scss';

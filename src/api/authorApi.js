@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { AUTHOR } from './apiConstant';
 import BaseApi from './baseApi';
 

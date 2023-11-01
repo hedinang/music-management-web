@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { DASHBOARD } from './apiConstant';
 import BaseApi from './baseApi';
 

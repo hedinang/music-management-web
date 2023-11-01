@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import './style.scss';
 import { Button, Input, Modal, Pagination, Select, Spin, Table, Tag } from 'antd';
@@ -12,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { toast } from 'react-toastify';
 import { NumericFormat } from 'react-number-format';
+
 
 
 function SongList() {
@@ -28,6 +30,7 @@ function SongList() {
     const [deleteModal, setDeleteModal] = useState(false)
     const [songList, setSongList] = useState([])
     const [loading, setLoading] = useState(false)
+    const [refresh, setRefresh] = useState(false)
 
     const [search, setSearch] = useState({
         name: null,
@@ -90,10 +93,15 @@ function SongList() {
                     title: (
                         <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
                             <Input
+                                value={search.category}
                                 className="column-input-search"
                                 placeholder={'Tìm kiếm'}
-                            // value={querySearch.member_code}
-                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                                onChange={(e) => {
+                                    setSearch({ ...search, category: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
                             />
                         </div>
                     ),
@@ -122,6 +130,7 @@ function SongList() {
                             <Input
                                 className="column-input-search"
                                 placeholder={'Tìm kiếm'}
+                                value={search.duration}
                                 onChange={(e) => {
                                     setSearch({ ...search, duration: Number(e.target.value.replaceAll(',', '')) })
                                 }}
@@ -149,6 +158,7 @@ function SongList() {
                             <Input
                                 className="column-input-search"
                                 placeholder={'Tìm kiếm'}
+                                value={search.author}
                                 onChange={(e) => {
                                     setSearch({ ...search, author: e.target.value })
                                 }}
@@ -173,16 +183,6 @@ function SongList() {
                 {
                     title: (
                         <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                            {/* <Input
-                                className="column-input-search"
-                                placeholder={'Tìm kiếm'}
-                                onChange={(e) => {
-                                    setSearch({ ...search, unit_price: e.target.value })
-                                }}
-                                onPressEnter={e => {
-                                    fetchData()
-                                }}
-                            /> */}
                             <NumericFormat
                                 className="column-input-search"
                                 placeholder={'Tìm kiếm'}
@@ -191,6 +191,7 @@ function SongList() {
                                         event.preventDefault();
                                     }
                                 }}
+                                value={search.unit_price ?? ''}
                                 onChange={(e) => {
                                     setSearch({ ...search, unit_price: Number(e.target.value.replaceAll(',', '')) })
                                 }}
@@ -319,9 +320,21 @@ function SongList() {
         }
     }
 
+    const onRefresh = () => {
+        setSearch({
+            name: null,
+            author: null,
+            category: null,
+            unit_price: null,
+            duration: null,
+            total_price: null
+        })
+        setRefresh(!refresh)
+    }
+
     useEffect(() => {
         fetchData()
-    }, [limit, page])
+    }, [limit, page, refresh])
 
     return <div className='category-list'>
         <div className='button-header'>
@@ -354,20 +367,18 @@ function SongList() {
                 className='ml-[auto] flex items-center bg-[#007dce] text-[white]'
                 shape="round"
                 type="primary"
-            // icon={<SearchIcon className="mr-2" />}
-            // onClick={onClear}
+                onClick={onRefresh}
             >
                 <FiRefreshCcw className="mr-2" /> Làm mới
             </Button>
-            <Button
+            {/* <Button
                 className='bg-[#007dce] text-[white] flex items-center'
                 shape="round"
                 type="primary"
                 icon={<SearchOutlined className="mr-1" />}
-            // onClick={handleSearch}
             >
                 Tìm kiếm
-            </Button>
+            </Button> */}
         </div>
         <Table
             dataSource={songList}

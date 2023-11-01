@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { SALE } from './apiConstant';
 import BaseApi from './baseApi';
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { SONG } from './apiConstant';
 import BaseApi from './baseApi';
 
