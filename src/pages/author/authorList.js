@@ -12,77 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { toast } from 'react-toastify';
 
-const columns = [
-    {
-        title: 'STT',
-        dataIndex: 'index',
-        key: 'index',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'index',
-                render: (value, record) => <div className='text-center'>{record.index}</div>,
-                width: '70px'
-            },
-        ],
-    },
-    {
-        title: 'Tên',
-        dataIndex: 'name',
-        key: 'name',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'name',
-                render: (value, record) => record.name,
-                width: '200px'
 
-            },
-        ],
-    },
-    {
-        title: 'Ngày tạo',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'createdAt',
-                render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: '200px'
-            },
-        ],
-    },
-
-];
 function AuthorList() {
     const [authorList, setAuthorList] = useState([])
     const navigate = useNavigate()
@@ -97,8 +27,87 @@ function AuthorList() {
     const [disableDelete, setDisableDelete] = useState(true)
     const [loading, setLoading] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
+    const [refresh, setRefresh] = useState(false)
+    const [search, setSearch] = useState({
+        name: null
+    })
 
+    const columns = [
+        {
+            title: 'STT',
+            dataIndex: 'index',
+            key: 'index',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            /> */}
+                        </div>
+                    ),
+                    dataIndex: 'index',
+                    render: (value, record) => <div className='text-center'>{record.index}</div>,
+                    width: '70px'
+                },
+            ],
+        },
+        {
+            title: 'Tên',
+            dataIndex: 'name',
+            key: 'name',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                value={search.name}
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                onChange={(e) => {
+                                    setSearch({ ...search, name: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'name',
+                    render: (value, record) => record.name,
+                    width: '200px'
 
+                },
+            ],
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            /> */}
+                        </div>
+                    ),
+                    dataIndex: 'createdAt',
+                    render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
+                    width: '200px'
+                },
+            ],
+        },
+
+    ]
 
     const rowSelection = {
         columnWidth: 15,
@@ -124,7 +133,8 @@ function AuthorList() {
     const fetchData = async () => {
         const result = await apiFactory.authorApi.getList({
             limit: limit,
-            page: page
+            page: page,
+            search: search
         })
 
         setAuthorList(result?.data?.items?.map((e, i) => (
@@ -157,9 +167,16 @@ function AuthorList() {
         }
     }
 
+    const onRefresh = () => {
+        setSearch({
+            name: null,
+        })
+        setRefresh(!refresh)
+    }
+
     useEffect(() => {
         fetchData()
-    }, [limit, page])
+    }, [limit, page, refresh])
 
     return <div className='author-list'>
         <div className='button-header'>
@@ -192,12 +209,13 @@ function AuthorList() {
                 className='ml-[auto] flex items-center bg-[#007dce] text-[white]'
                 shape="round"
                 type="primary"
-            // icon={<SearchIcon className="mr-2" />}
-            // onClick={onClear}
+                // icon={<SearchIcon className="mr-2" />}
+                // onClick={onClear}
+                onClick={onRefresh}
             >
                 <FiRefreshCcw className="mr-2" /> Làm mới
             </Button>
-            <Button
+            {/* <Button
                 className='bg-[#007dce] text-[white] flex items-center'
                 shape="round"
                 type="primary"
@@ -205,7 +223,7 @@ function AuthorList() {
             // onClick={handleSearch}
             >
                 Tìm kiếm
-            </Button>
+            </Button> */}
         </div>
         <Table
             dataSource={authorList}
@@ -217,7 +235,7 @@ function AuthorList() {
                 position: ['bottomCenter'],
                 style: { display: 'none' },
             }}
-            scroll={{ y: 'calc(100vh - 150px)'}}
+            scroll={{ y: 'calc(100vh - 150px)' }}
             onRow={(record) => ({
                 onDoubleClick: () => {
                     onDoubleClick(record);

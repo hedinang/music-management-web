@@ -12,93 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import apiFactory from '../../api';
 import { toast } from 'react-toastify';
 
-// const dataSource = [
-//     {
-//         key: 1,
-//         id: 1,
-//         name: 'Nhạc trẻ',
-//         createdTime: formatTime(new Date())
-//     },
-//     {
-//         key: 2,
-//         id: 2,
-//         name: 'Nhạc vàng',
-//         createdTime: formatTime(new Date())
 
-//     },
-// ];
-
-const columns = [
-    {
-        title: 'STT',
-        dataIndex: 'index',
-        key: 'index',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'index',
-                render: (value, record) => <div className='text-center'>{record.index}</div>,
-                width: '70px'
-            },
-        ],
-    },
-    {
-        title: 'Tên',
-        dataIndex: 'name',
-        key: 'name',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'name',
-                render: (value, record) => record.name,
-                width: '200px'
-
-            },
-        ],
-    },
-    {
-        title: 'Ngày tạo',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'createdAt',
-                render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: '200px'
-            },
-        ],
-    },
-
-];
 function CategoryList() {
     const [categoryList, setCategoryList] = useState([])
     const navigate = useNavigate()
@@ -113,6 +27,87 @@ function CategoryList() {
     const [disableDelete, setDisableDelete] = useState(true)
     const [deleteModal, setDeleteModal] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [search, setSearch] = useState({
+        name: null
+    })
+    const [refresh, setRefresh] = useState(false)
+
+    const columns = [
+        {
+            title: 'STT',
+            dataIndex: 'index',
+            key: 'index',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            /> */}
+                        </div>
+                    ),
+                    dataIndex: 'index',
+                    render: (value, record) => <div className='text-center'>{record.index}</div>,
+                    width: '70px'
+                },
+            ],
+        },
+        {
+            title: 'Tên',
+            dataIndex: 'name',
+            key: 'name',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                value={search.name}
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                onChange={(e) => {
+                                    setSearch({ ...search, name: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'name',
+                    render: (value, record) => record.name,
+                    width: '200px'
+
+                },
+            ],
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            /> */}
+                        </div>
+                    ),
+                    dataIndex: 'createdAt',
+                    render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
+                    width: '200px'
+                },
+            ],
+        },
+
+    ]
 
     const rowSelection = {
         columnWidth: 15,
@@ -150,7 +145,8 @@ function CategoryList() {
     const fetchData = async () => {
         const result = await apiFactory.categoryApi.getList({
             limit: limit,
-            page: page
+            page: page,
+            search: search
         })
 
         setCategoryList(result?.data?.items?.map((e, i) => (
@@ -170,13 +166,18 @@ function CategoryList() {
         navigate(`/category/${record.id}`);
     };
 
+    const onRefresh = () => {
+        setSearch({
+            name: null,
+        })
+        setRefresh(!refresh)
+    }
+
     useEffect(() => {
         fetchData()
-    }, [limit, page])
+    }, [limit, page, refresh])
 
     return <div className='category-list'>
-
-
         <div className='button-header'>
             <Button shape="round"
                 type="primary"
@@ -207,12 +208,13 @@ function CategoryList() {
                 className='ml-[auto] flex items-center bg-[#007dce] text-[white]'
                 shape="round"
                 type="primary"
-            // icon={<SearchIcon className="mr-2" />}
-            // onClick={onClear}
+                // icon={<SearchIcon className="mr-2" />}
+                // onClick={onClear}
+                onClick={onRefresh}
             >
                 <FiRefreshCcw className="mr-2" /> Làm mới
             </Button>
-            <Button
+            {/* <Button
                 className='bg-[#007dce] text-[white] flex items-center'
                 shape="round"
                 type="primary"
@@ -220,7 +222,7 @@ function CategoryList() {
             // onClick={handleSearch}
             >
                 Tìm kiếm
-            </Button>
+            </Button> */}
         </div>
         <Table
             dataSource={categoryList}
@@ -276,7 +278,6 @@ function CategoryList() {
                 </div>
             }
         </Modal>
-
     </div>
 
 }

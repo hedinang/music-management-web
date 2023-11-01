@@ -1,17 +1,16 @@
 
 import React, { useEffect, useState } from 'react';
 
-import './style.scss';
 import { Button, Input, Modal, Pagination, Select, Spin, Table } from 'antd';
 import { AiFillCopy } from 'react-icons/ai';
 import { FiRefreshCcw } from 'react-icons/fi';
+import './style.scss';
 
 import { DeleteOutlined, FileAddOutlined, SearchOutlined } from '@ant-design/icons';
-import { formatTime } from '../../utils/formatTime';
 import { useNavigate } from 'react-router-dom';
-import apiFactory from '../../api';
 import { toast } from 'react-toastify';
-
+import apiFactory from '../../api';
+import { formatTime } from '../../utils/formatTime';
 
 const columns = [
     {
@@ -137,12 +136,12 @@ const columns = [
             {
                 title: (
                     <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
+                        {/* <Input
                             className="column-input-search"
                             placeholder={'Tìm kiếm'}
                         // value={querySearch.member_code}
                         // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
+                        /> */}
                     </div>
                 ),
                 dataIndex: 'createdAt',
@@ -196,9 +195,11 @@ function CustomerList() {
                 id: e?.id,
                 key: e?.id,
                 index: (page - 1) * limit + i + 1,
+                name: e?.name,
                 username: e?.username,
                 createdAt: formatTime(e?.createdAt),
-                balance: e?.balance ? e?.balance : 0
+                balance: e?.balance ? e?.balance : 0,
+                email: e?.email
             }
         )))
         setTotalItems(result?.data?.total_items)
