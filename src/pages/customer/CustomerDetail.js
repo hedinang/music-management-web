@@ -120,7 +120,7 @@ function CustomerDetail({ different }) {
                 accept="image/*"
             />
             <div className="flex flex-col items-center justify-center">
-                {value.url ? (
+                {(value?.url && value.url !== '') ? (
                     <div className='flex flex-col justify-center items-center gap-[5px]'>
                         <img src={value.url} alt="preview" className="w-full h-[100px] object-cover" />
                         {different.type !== 'view' && <DeleteFilled className='text-[red]' onClick={removeImg} />}
@@ -135,7 +135,7 @@ function CustomerDetail({ different }) {
                 )}
             </div>
         </label>
-    }, [])
+    }, [different])
 
     const AsyncSelectFavoriteSong = ({ value, onChange }) => {
         const [limit, setLimit] = useState(10);

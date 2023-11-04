@@ -99,7 +99,7 @@ function CategoryDetail({ different }) {
                 disabled={different.type === 'view'}
                 onChange={uploadImg} />
             <div className="flex flex-col items-center justify-center">
-                {value.url !== '' ? (
+                {(value?.url && value.url !== '') ? (
                     <div className='flex flex-col justify-center items-center gap-[5px]'>
                         <img src={value.url} alt="preview" className="w-full h-[100px] object-cover" />
                         {different.type !== 'view' && value.url && <DeleteFilled className='text-[red]' onClick={removeImg} />}
