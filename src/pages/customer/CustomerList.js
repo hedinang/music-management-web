@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Button, Input, Modal, Pagination, Select, Spin, Table } from 'antd';
 import { AiFillCopy } from 'react-icons/ai';
@@ -12,146 +12,7 @@ import { toast } from 'react-toastify';
 import apiFactory from '../../api';
 import { formatTime } from '../../utils/formatTime';
 
-const columns = [
-    {
-        title: 'STT',
-        dataIndex: 'index',
-        key: 'index',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        {/* <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        /> */}
-                    </div>
-                ),
-                dataIndex: 'index',
-                render: (value, record) => <div className='text-center'>{record.index}</div>,
-                width: 40
-            },
-        ],
-    },
-    {
-        title: 'Tên người dùng',
-        dataIndex: 'name',
-        key: 'name',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'name',
-                render: (value, record) => record.name,
-                width: 200
 
-            },
-        ],
-    },
-    {
-        title: 'Tên đăng nhập',
-        dataIndex: 'username',
-        key: 'username',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'username',
-                render: (value, record) => record.username,
-                width: 200
-
-            },
-        ],
-    },
-    {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'email',
-                render: (value, record) => record.email,
-                width: 200
-
-            },
-        ],
-    },
-    {
-        title: 'Số dư tài khoản',
-        dataIndex: 'balance',
-        key: 'balance',
-        // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        />
-                    </div>
-                ),
-                dataIndex: 'balance',
-                render: (value, record) => record.balance,
-                width: 150
-            },
-        ],
-    },
-    {
-        title: 'Ngày tạo',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        children: [
-            {
-                title: (
-                    <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
-                        {/* <Input
-                            className="column-input-search"
-                            placeholder={'Tìm kiếm'}
-                        // value={querySearch.member_code}
-                        // onChange={(e) => onSearch('member_code', e.target.value)}
-                        /> */}
-                    </div>
-                ),
-                dataIndex: 'createdAt',
-                render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
-                width: 300
-            },
-        ],
-    },
-
-];
 function CustomerList() {
     const navigate = useNavigate()
     const [limit, setLimit] = useState(10)
@@ -166,6 +27,174 @@ function CustomerList() {
     const [customerList, setCustomerList] = useState([])
     const [deleteModal, setDeleteModal] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [refresh, setRefresh] = useState(false)
+    const [search, setSearch] = useState({
+        name: null,
+        username: null,
+        email: null,
+        balance: null,
+    })
+
+    const columns = useMemo(() => [
+        {
+            title: 'STT',
+            dataIndex: 'index',
+            key: 'index',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            /> */}
+                        </div>
+                    ),
+                    dataIndex: 'index',
+                    render: (value, record) => <div className='text-center'>{record.index}</div>,
+                    width: 40
+                },
+            ],
+        },
+        {
+            title: 'Tên người dùng',
+            dataIndex: 'name',
+            key: 'name',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                value={search.name}
+                                onChange={(e) => {
+                                    setSearch({ ...search, name: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'name',
+                    render: (value, record) => record.name,
+                    width: 200
+
+                },
+            ],
+        },
+        {
+            title: 'Tên đăng nhập',
+            dataIndex: 'username',
+            key: 'username',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                value={search.username}
+                                onChange={(e) => {
+                                    setSearch({ ...search, username: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'username',
+                    render: (value, record) => record.username,
+                    width: 200
+
+                },
+            ],
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                value={search.email}
+                                onChange={(e) => {
+                                    setSearch({ ...search, email: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'email',
+                    render: (value, record) => record.email,
+                    width: 200
+
+                },
+            ],
+        },
+        {
+            title: 'Số dư tài khoản',
+            dataIndex: 'balance',
+            key: 'balance',
+            // sorter: (a,b) => a.ss_code?.localeCompare(b.ss_code),
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                                value={search.balance}
+                                onChange={(e) => {
+                                    setSearch({ ...search, balance: e.target.value })
+                                }}
+                                onPressEnter={e => {
+                                    fetchData()
+                                }}
+                            />
+                        </div>
+                    ),
+                    dataIndex: 'balance',
+                    render: (value, record) => record.balance,
+                    width: 150
+                },
+            ],
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            children: [
+                {
+                    title: (
+                        <div draggable onDragStart={(e) => e.preventDefault()} className="search-param-list-data">
+                            {/* <Input
+                                className="column-input-search"
+                                placeholder={'Tìm kiếm'}
+                            // value={querySearch.member_code}
+                            // onChange={(e) => onSearch('member_code', e.target.value)}
+                            /> */}
+                        </div>
+                    ),
+                    dataIndex: 'createdAt',
+                    render: (value, record) => <div className='text-center'>{record.createdAt}</div>,
+                    width: 300
+                },
+            ],
+        },
+
+    ], [search])
 
     const rowSelection = {
         columnWidth: '30px',
@@ -189,7 +218,7 @@ function CustomerList() {
     }
 
     const fetchData = async () => {
-        const result = await apiFactory.customerApi.getList({ limit, page })
+        const result = await apiFactory.customerApi.getList({ limit, page, search: search })
         setCustomerList(result?.data?.items?.map((e, i) => (
             {
                 id: e?.id,
@@ -221,9 +250,21 @@ function CustomerList() {
         navigate(`/customer/${record.id}`);
     };
 
+    const onRefresh = () => {
+        setSearch({
+            name: null,
+            author: null,
+            category: null,
+            unit_price: null,
+            duration: null,
+            total_price: null
+        })
+        setRefresh(!refresh)
+    }
+
     useEffect(() => {
         fetchData()
-    }, [page, limit])
+    }, [page, limit, refresh])
 
     return <div className='category-list'>
         <div className='button-header'>
@@ -256,8 +297,7 @@ function CustomerList() {
                 className='ml-[auto] flex items-center bg-[#007dce] text-[white]'
                 shape="round"
                 type="primary"
-            // icon={<SearchIcon className="mr-2" />}
-            // onClick={onClear}
+                onClick={onRefresh}
             >
                 <FiRefreshCcw className="mr-2" /> Làm mới
             </Button>

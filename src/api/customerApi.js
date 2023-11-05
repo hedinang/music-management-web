@@ -5,7 +5,7 @@ import BaseApi from './baseApi';
 class CustomerApi extends BaseApi {
     getList(param) {
         param.type = 'CLIENT'
-        return this.post(`${CUSTOMER}/list`, param);
+        return this.post(`${CUSTOMER}/customer-list`, param);
     }
     getById(id) {
         if (id) {
