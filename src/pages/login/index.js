@@ -51,6 +51,28 @@ function Login(props) {
     setLoading(false)
 
     if (result.status === 200) {
+      const result = await apiFactory.authApi.login(
+        {
+          username: values.username,
+          password: values.password,
+        }
+      )
+      if (!result?.data) {
+        toast.error(result?.message)
+      }
+      const me = await apiFactory.authApi.getMe(result?.data?.access_token);
+
+      if (!me?.data) {
+        toast.error(result?.message)
+      }
+
+      if (me?.data?.type !== 'ADMIN') {
+        toast.error("Tài khoàn này không phải là admin!")
+        return
+      }
+
+      localStorage.setItem('username', me?.data?.username || 'Vô danh')
+
       let expires = new Date(
         new Date().setHours(new Date().getHours() + parseInt(EXPIRY_TIME))
       );

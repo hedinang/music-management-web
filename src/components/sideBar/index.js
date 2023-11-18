@@ -30,7 +30,7 @@ const UserPanel = () => {
     return <div className='user-panel'>
         <Avatar size={48} icon={<UserOutlined />} />
         <div className='flex flex-col justify-center'>
-            <div>0001</div>
+            <div>{localStorage.getItem('username')}</div>
             <div>Chỉnh sửa</div>
         </div>
     </div>
@@ -63,7 +63,7 @@ const SideBar = () => {
     const minorItems = [
         getItem(<Link to={'/customer/list'}>{'Danh sách người dùng'}</Link>, '1', <UserOutlined />),
         getItem(<Link to={'/'}>{'Inbox'}</Link>, '1', <SiMinutemailer />),
-        getItem(<Link to={'/'}>{'Danh sách admin'}</Link>, '1', <HiUserGroup />),
+        getItem(<Link to={'/admin/list'}>{'Danh sách admin'}</Link>, '1', <HiUserGroup />),
         getItem(<Link onClick={logout} >{'Đăng xuất'}</Link>, '1', <HiOutlineLogout />)
     ]
 

@@ -17,6 +17,8 @@ import CustomerList from '../pages/customer/CustomerList';
 import CustomerDetail from '../pages/customer/CustomerDetail';
 import AuthorList from '../pages/author/authorList';
 import AuthorDetail from '../pages/author/authorDetail';
+import AdminList from '../pages/admin/AdminList';
+import AdminDetail from '../pages/admin/AdminDetail';
 // import CategoryEdit from '../components/category';
 // import Category from '../components/category';
 
@@ -133,6 +135,26 @@ const router = createBrowserRouter([
             {
                 path: '/customer/edit/:id',
                 element: <CustomerDetail
+                    different={{ type: 'edit' }} />
+            },
+
+            {
+                path: '/admin/list',
+                element: <AdminList />
+            },
+            {
+                path: '/admin/add',
+                element: <AdminDetail
+                    different={{ type: 'add' }} />
+            },
+            {
+                path: '/admin/:id',
+                element: <AdminDetail
+                    different={{ type: 'view' }} />
+            },
+            {
+                path: '/admin/edit/:id',
+                element: <AdminDetail
                     different={{ type: 'edit' }} />
             },
 
