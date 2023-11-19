@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import jwtDecode from 'jwt-decode';
 import SideBar from '../../components/sideBar/index'
 import Header from '../../components/header/index';
-import apiFactory from '../../api';
 
 
 const AuthLayout = ({ children }) => {
@@ -37,18 +36,6 @@ const AuthLayout = ({ children }) => {
             navigate('/login');
             return
         }
-        // const me = await apiFactory.authApi.getMe();
-
-        // if (!me?.data) {
-        //     Cookies.remove('access_token')
-        //     navigate('/login');
-        //     return
-        // }
-        // if (me?.data?.type !== 'ADMIN') {
-        //     Cookies.remove('access_token')
-        //     navigate('/login');
-        //     return
-        // }
     }
     useEffect(() => {
         process()

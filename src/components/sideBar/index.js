@@ -1,18 +1,20 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { DashboardOutlined, GiftOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
-import { Layout, Menu, Avatar } from 'antd';
-import { useMemo, useState } from 'react';
+import { Layout, Menu } from 'antd';
+import { useMemo } from 'react';
 import { BsFillCartFill } from 'react-icons/bs';
 import { FaMusic } from 'react-icons/fa';
 import { HiOutlineLogout, HiUserGroup } from 'react-icons/hi';
 import { SiMinutemailer } from 'react-icons/si';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React from 'react';
 
 
 import './style.scss';
 import Cookies from 'js-cookie';
 import apiFactory from '../../api';
+import { useSideBarStore } from '../../store/SideBarStore';
+import { keyMenuItem } from '../../config/Constant';
 
 function getItem(label, key, icon, children, type) {
     return {
@@ -24,77 +26,57 @@ function getItem(label, key, icon, children, type) {
     }
 }
 
-
-
-const UserPanel = () => {
-    return <div className='user-panel'>
-        <Avatar size={48} icon={<UserOutlined />} />
-        <div className='flex flex-col justify-center'>
-            <div>{localStorage.getItem('username')}</div>
-            <div>Chỉnh sửa</div>
-        </div>
-    </div>
-}
-
 const SideBar = () => {
     const navigate = useNavigate()
-    const { pathname } = useLocation();
-    const isCommunity = pathname.includes('/community');
-    const [collapsed, setCollapsed] = useState(false);
+    const collapse = useSideBarStore(state => state.collapse)
+    const switchBreadCrumbItem = useSideBarStore(state => state.switchBreadCrumbItem)
 
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
     const logout = async () => {
         await apiFactory.customerApi.logout()
         Cookies.remove('access_token')
         navigate('/login')
     }
 
-    const items = [
-        getItem(<Link to={'/'}>{'Dashboard'}</Link>, '1', <DashboardOutlined />),
-        // getItem(<Link to={'/product/list'}>{'Quản lý danh sách sản phẩm'}</Link>, '1', <BsFillDatabaseFill />),
-        getItem(<Link to={'/song/list'}>{'Danh sách nhạc'}</Link>, '1', <FaMusic />),
-        getItem(<Link to={'/author/list'}>{'Danh sách tác giả'}</Link>, '1', <UserOutlined />),
-        getItem(<Link to={'/sale/list'}>{'Danh sách đã bán'}</Link>, '1', <BsFillCartFill />),
-        getItem(<Link to={'/category/list'}>{'Danh mục'}</Link>, '1', <UnorderedListOutlined />),
-        getItem(<Link to={'/'}>{'Mã quà tặng'}</Link>, '1', <GiftOutlined />)
-    ]
-    const minorItems = [
-        getItem(<Link to={'/customer/list'}>{'Danh sách người dùng'}</Link>, '1', <UserOutlined />),
-        getItem(<Link to={'/'}>{'Inbox'}</Link>, '1', <SiMinutemailer />),
-        getItem(<Link to={'/admin/list'}>{'Danh sách admin'}</Link>, '1', <HiUserGroup />),
-        getItem(<Link onClick={logout} >{'Đăng xuất'}</Link>, '1', <HiOutlineLogout />)
-    ]
+    const items = useMemo(() => {
+        if (collapse) {
+            return [
+                getItem(<Link to={'/'}>{keyMenuItem.DASHBOARD.name}</Link>, keyMenuItem.DASHBOARD.key, <DashboardOutlined />),
+                getItem(<Link to={'/song/list'}>{keyMenuItem.SONG_LIST.name}</Link>, keyMenuItem.SONG_LIST.key, <FaMusic />),
+                getItem(<Link to={'/author/list'}>{keyMenuItem.AUTHOR_LIST.name}</Link>, keyMenuItem.AUTHOR_LIST.key, <UserOutlined />),
+                getItem(<Link to={'/sale/list'}>{keyMenuItem.SALE_LIST.name}</Link>, keyMenuItem.SALE_LIST.key, <BsFillCartFill />),
+                getItem(<Link to={'/category/list'}>{keyMenuItem.CATEGORY_LIST.name}</Link>, keyMenuItem.CATEGORY_LIST.key, <UnorderedListOutlined />),
+                getItem(<Link to={'/'}>{keyMenuItem.PRESENT_LIST.name}</Link>, keyMenuItem.PRESENT_LIST.key, <GiftOutlined />),
 
-    const selectedKey = useMemo(() => {
-        const route = {
-            '/enviroment/dashboard': '1',
-            '/enviroment/x-road-members': '2',
-            '/enviroment/security-servers': '3',
-            '/enviroment/ss-certificates': '4',
-            '/enviroment/subsystem': '5',
-            '/enviroment/adapter-servers': '6',
-            '/enviroment/databases': '7',
-            '/enviroment/services': '8',
-            '/enviroment/setting': '9',
-            '/community/jp-link-institutions': '10',
-            '/community/jp-link-members': '11',
-            '/community/data-service-catalogue': '12',
-        };
-        const resultKey = Object.entries(route).find(([key]) => pathname.includes(key));
-        if (!resultKey) {
-            return '1';
+                getItem(<Link to={'/customer/list'}>{keyMenuItem.CUSTOMER_LIST.name}</Link>, keyMenuItem.CUSTOMER_LIST.key, <UserOutlined />),
+                getItem(<Link to={'/'}>{keyMenuItem.CHAT.name}</Link>, keyMenuItem.CHAT.key, <SiMinutemailer />),
+                getItem(<Link to={'/admin/list'}>{keyMenuItem.ADMIN_LIST.name}</Link>, keyMenuItem.ADMIN_LIST.key, <HiUserGroup />),
+                getItem(<Link onClick={logout} >{keyMenuItem.LOG_OUT.name}</Link>, keyMenuItem.LOG_OUT.key, <HiOutlineLogout />)
+            ]
+        } else {
+            return [
+                getItem(<div className='text-center text-[#4b646f]'>Các chức năng quản lý</div>, keyMenuItem.FUNCTION),
+                getItem(<Link to={'/'}>{keyMenuItem.DASHBOARD.name}</Link>, keyMenuItem.DASHBOARD.key, <DashboardOutlined />),
+                getItem(<Link to={'/song/list'}>{keyMenuItem.SONG_LIST.name}</Link>, keyMenuItem.SONG_LIST.key, <FaMusic />),
+                getItem(<Link to={'/author/list'}>{keyMenuItem.AUTHOR_LIST.name}</Link>, keyMenuItem.AUTHOR_LIST.key, <UserOutlined />),
+                getItem(<Link to={'/sale/list'}>{keyMenuItem.SALE_LIST.name}</Link>, keyMenuItem.SALE_LIST.key, <BsFillCartFill />),
+                getItem(<Link to={'/category/list'}>{keyMenuItem.CATEGORY_LIST.name}</Link>, keyMenuItem.CATEGORY_LIST.key, <UnorderedListOutlined />),
+                getItem(<Link to={'/'}>{keyMenuItem.PRESENT_LIST.name}</Link>, keyMenuItem.PRESENT_LIST.key, <GiftOutlined />),
+
+                getItem(<div className='text-center text-[#4b646f]'>Các chức năng khác</div>, keyMenuItem.FUNCTION),
+                getItem(<Link to={'/customer/list'}>{keyMenuItem.CUSTOMER_LIST.name}</Link>, keyMenuItem.CUSTOMER_LIST.key, <UserOutlined />),
+                getItem(<Link to={'/'}>{keyMenuItem.CHAT.name}</Link>, keyMenuItem.CHAT.key, <SiMinutemailer />),
+                getItem(<Link to={'/admin/list'}>{keyMenuItem.ADMIN_LIST.name}</Link>, keyMenuItem.ADMIN_LIST.key, <HiUserGroup />),
+                getItem(<Link onClick={logout} >{keyMenuItem.LOG_OUT.name}</Link>, keyMenuItem.LOG_OUT.key, <HiOutlineLogout />)
+            ]
         }
-        return resultKey[1];
-    }, [pathname]);
-    // const ContentHeaderMenu = useMemo < string > (() => (pathname.includes('enviroment') ? t('left_menu.my_enviroment.title') : t('left_menu.community.title')), [pathname, t]);
+    }, [collapse])
+
     return (
         <Layout.Sider
             className="!max-w-[230px] !w-auto h-[100vh]
               SideBarWrapper"
             collapsible
-            collapsed={collapsed}
+            collapsed={collapse}
             width={230}
             trigger={null}
             style={{
@@ -102,31 +84,19 @@ const SideBar = () => {
                 fontFamily: 'Inter',
             }}
         >
-            <a className='user-panel-logo'>
-                <b className='text-[20px]'>Shop</b>
-                <span>Music</span>
-            </a>
-            <UserPanel />
-            <div className='category-separation '>Các chức năng quản lý</div>
+            {!collapse ?
+                <a className='user-panel-logo'>
+                    <b className='text-[20px]'>Shop</b>
+                    <span>Music</span>
+                </a>
+                : <a className='user-panel-logo'>SM</a>
+            }
             <Menu
-                defaultSelectedKeys={[selectedKey]}
-                selectedKeys={[selectedKey]}
-                defaultOpenKeys={['1']}
+                onClick={e => switchBreadCrumbItem(keyMenuItem[e.key].name)}
                 mode="inline"
+                // mode="vertical"
                 theme="dark"
                 items={items}
-                className='bg-[#222d32]'
-            />
-
-            <div className='category-separation'>Các chức năng khác</div>
-
-            <Menu
-                defaultSelectedKeys={[selectedKey]}
-                selectedKeys={[selectedKey]}
-                defaultOpenKeys={['1']}
-                mode="inline"
-                theme="dark"
-                items={minorItems}
                 className='bg-[#222d32]'
             />
         </Layout.Sider>
