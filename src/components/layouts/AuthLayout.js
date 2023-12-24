@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/react-in-jsx-scope */
-import { Layout, Space } from 'antd';
+import { Layout, Space, Drawer } from 'antd';
 import React from 'react';
 
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import jwtDecode from 'jwt-decode';
 import SideBar from '../../components/sideBar/index'
 import Header from '../../components/header/index';
+import { SideBarDrawer } from '../sideBar/sideBarDrawer';
 
 
 const AuthLayout = ({ children }) => {
@@ -47,6 +48,7 @@ const AuthLayout = ({ children }) => {
             <Space direction="vertical" style={{ width: '100%' }} size={[0, 48]}>
                 <Layout>
                     <SideBar />
+                    <SideBarDrawer/>
                     <Layout.Content >
                         <Header />
                         <Outlet />

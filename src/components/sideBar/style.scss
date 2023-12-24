@@ -4,42 +4,55 @@
     font-family: 'Inter' !important;
 
     .ant-menu-item.ant-menu-item-selected {
-        background-color: '$blue-4';
-        @apply text-white;
-
-        svg {
-            path {
-                stroke: white;
-            }
-        }
+        background-color: #222d32;
+        color: #b8c7ce
     }
+
+    @media only screen and (max-width: 860px) {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 860px) {
+    .drawer {
+        display: none;
+    }
+
+    .ant-drawer-content-wrapper {
+        box-shadow: none !important;
+    }
+
+    .ant-drawer {
+        inset: unset !important;
+    }
+}
+
+.ant-drawer-header {
+    border-bottom: 0 !important
+}
+
+.logoHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    background-color: #377fa9;
+    color: white;
+    height: 50px;
+
+    &:hover {
+        color: white;
+    }
+}
+
+.menu-drawer {
+    background-color: white;
+    color: black;
 
     .ant-menu-item {
-        // @apply text-gray-1;
-
-        svg {
-            path {
-                // @apply stroke-gray-1;
-            }
+        &:hover {
+            color: black !important
         }
-    }
-
-    .ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light {
-        border-inline-end: none;
-    }
-
-    .ant-menu-item.ant-menu-item-selected{
-        background-color: #222d32;
-        color:#b8c7ce
-    }
-    
-    .category-separation{
-        font-size: 12px;
-        color:#4b646f;
-        background-color: #1a2226;
-        display: flex;
-        align-items: center;
-        height: 40px;
-        justify-content: center;
     }
 }

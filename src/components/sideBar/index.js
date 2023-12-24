@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/react-in-jsx-scope */
 import { DashboardOutlined, GiftOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
@@ -73,8 +74,7 @@ const SideBar = () => {
 
     return (
         <Layout.Sider
-            className="!max-w-[230px] !w-auto h-[100vh]
-              SideBarWrapper"
+            className="!max-w-[230px] !w-auto h-[100vh] SideBarWrapper"
             collapsible
             collapsed={collapse}
             width={230}
